@@ -34,8 +34,8 @@ jobs:
       - name: Bump version
         if: inputs.version != 'none'
         run: |
-          git config --global user.email Ivordir@pm.me
-          git config --global user.name Ivordir
+          git config --global user.email ian.manske@pm.me
+          git config --global user.name 'Ian Manske'
           pnpm version ${{ inputs.version }}
           git push --follow-tags
 

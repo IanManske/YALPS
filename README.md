@@ -1,4 +1,4 @@
-# YALPS [![](https://badgen.net/npm/v/yalps)](https://www.npmjs.com/package/yalps) [![](https://badgen.net/npm/license/yalps)](https://github.com/Ivordir/YALPS/blob/main/LICENSE) [![](https://deno.bundlejs.com/badge?q=yalps)](https://bundlejs.com/?q=yalps)
+# YALPS [![](https://badgen.net/npm/v/yalps)](https://www.npmjs.com/package/yalps) [![](https://badgen.net/npm/license/yalps)](https://github.com/IanManske/YALPS/blob/main/LICENSE) [![](https://deno.bundlejs.com/badge?q=yalps)](https://bundlejs.com/?q=yalps)
 
 ## What is This (For)?
 
