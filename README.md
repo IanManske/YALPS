@@ -2,18 +2,10 @@
 
 ## What is This (For)?
 
-This is **Yet Another Linear Programming Solver (YALPS)**.
-It is intended as a performant, lightweight linear programming (LP) solver geared towards small LP problems.
-It can solve non-integer, integer, and mixed integer LP problems.
-While webassembly ports of existing solvers perform well,
-they tend to have larger bundle sizes and may be overkill for your use case.
-YALPS is the alternative for the browser featuring a small [bundle size](https://bundlephobia.com/package/yalps).
+This is **Yet Another Linear Programming Solver (YALPS)**. It is intended as a performant, lightweight linear programming (LP) solver geared towards small LP problems. It can solve non-integer, integer, and mixed integer LP problems.
+While webassembly ports of existing solvers perform well, they tend to have larger bundle sizes and may be overkill for your use case. YALPS is the alternative for the browser featuring a small [bundle size](https://bundlephobia.com/package/yalps).
 
-YALPS is a rewrite of [jsLPSolver](https://www.npmjs.com/package/javascript-lp-solver).
-The people there have made a great and easy to use solver.
-However, the API was limited to objects only, and I saw other areas that could have been improved.
-You can check out [jsLPSolver](https://www.npmjs.com/package/javascript-lp-solver)
-for more background and information regarding LP problems.
+YALPS is a rewrite of [jsLPSolver](https://www.npmjs.com/package/javascript-lp-solver). The people there have made a great and easy to use solver. However, the API was limited to objects only, and I saw other areas that could have been improved. You can check out [jsLPSolver](https://www.npmjs.com/package/javascript-lp-solver) for more background and information regarding LP problems.
 
 Compared to jsLPSolver, YALPS has the following differences:
 
@@ -79,8 +71,7 @@ const solution = solve(model)
 // { status: "optimal", result: 14400, variables: [ ["table", 8], ["dresser", 3] ] }
 ```
 
-Iterables and objects can be mixed and matched for the `constraints` and `variables` fields.
-Additionally, each variable's coefficients can be an object or an iterable. E.g.:
+Iterables and objects can be mixed and matched for the `constraints` and `variables` fields. Additionally, each variable's coefficients can be an object or an iterable. E.g.:
 
 <!-- prettier-ignore-start -->
 
@@ -115,8 +106,7 @@ const solution: Solution = solve(model)
 
 ## API
 
-This is a stripped down version of YALPS's API.
-Use the JSDoc annotations / hover information in your editor for more extensive documentation.
+This is a stripped down version of YALPS's API. Use the JSDoc annotations / hover information in your editor for more extensive documentation.
 
 ```typescript
 type Constraint = {
@@ -256,21 +246,9 @@ const solve: <VarKey = string, ConKey = string>(model: Model<VarKey, ConKey>, op
 
 # Performance
 
-While YALPS generally performs better than javascript-lp-solver,
-this solver is still geared towards small problems (hundreds of variables or constraints).
-For example, the solver keeps the full representation of the matrix in memory as a dense array.
-As a general rule, the number of variables and constraints should probably be a few thousand or less,
-and the number of integer variables should be a few hundred at the most.
-If your use case has large problems, it is recommended that you first
-benchmark and test the solver on your own before committing to using it.
-For very large and/or integral problems, a more professional solver is recommended,
-e.g. [glpk.js](https://www.npmjs.com/package/glpk.js).
+While YALPS generally performs better than javascript-lp-solver, this solver is still geared towards small problems (hundreds of variables or constraints). For example, the solver keeps the full representation of the matrix in memory as a dense array. As a general rule, the number of variables and constraints should probably be a few thousand or less, and the number of integer variables should be a few hundred at the most. If your use case has large problems, it is recommended that you first benchmark and test the solver on your own before committing to using it. For very large and/or integral problems, a more professional solver is recommended, e.g. [glpk.js](https://www.npmjs.com/package/glpk.js).
 
-Nevertheless, below are the results from some benchmarks comparing YALPS to other solvers.
-Each solver was run 30 times for each benchmark problem.
-A full garbage collection was manually triggered before starting each solver's 30 trials.
-The averages and standard deviations are measured in milliseconds. Slowdown is calculated as `mean / fastest mean`.
-The benchmarks were run on ts-node v10.9.1 and node v19.8.1. Your mileage may vary in a browser setting.
+Nevertheless, below are the results from some benchmarks comparing YALPS to other solvers. Each solver was run 30 times for each benchmark problem. A full garbage collection was manually triggered before starting each solver's 30 trials. The averages and standard deviations are measured in milliseconds. Slowdown is calculated as `mean / fastest mean`. The benchmarks were run on ts-node v10.9.1 and node v19.8.1. Your mileage may vary in a browser setting.
 
 <pre>
 Monster 2: 888 constraints, 924 variables, 112 integers:
@@ -373,12 +351,8 @@ SHIP08S: 778 constraints, 2387 variables, 0 integers:
 └────────────┴───────┴────────┴──────────┘
 </pre>
 
-The code used for these benchmarks is available under `benchmarks/`.
-Measuring performance isn't always straightforward, so take these synthetic benchmarks with a grain of salt.
-It is always recommended to benchmark for your use case.
-Then again, if your problems are typically of small size, then this solver should have no issue (and may be faster)!
+The code used for these benchmarks is available under `benchmarks/`. Measuring performance isn't always straightforward, so take these synthetic benchmarks with a grain of salt. It is always recommended to benchmark for your use case. Then again, if your problems are typically of small size, then this solver should have no issue (and may be faster)!
 
 # Maintenance/Status
 
-This package is still being maintained (i.e., bug fixes and security updates as necessary).
-However, no new features are planned or being worked on at this time.
+This package is still being maintained (i.e., bug fixes and security updates as necessary). However, no new features are planned or being worked on at this time.
