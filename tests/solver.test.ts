@@ -2,7 +2,7 @@ import { Solution, solve } from "../src/index.js"
 import { TestCase, testCases } from "./helpers/read.js"
 import { validSolutionAndStatus, valueSums } from "./helpers/validate.js"
 import { keys, newRand, randomElement } from "./helpers/util.js"
-import test, { ExecutionContext } from "ava"
+import { test, expect } from "vitest"
 
 type SolvedTestCase = TestCase & { readonly solution: Readonly<Solution> }
 
@@ -14,17 +14,11 @@ const testData: readonly SolvedTestCase[] = testCases().map(data => ({
 const valid = (solution: Readonly<Solution>, { model, options, expected }: SolvedTestCase) =>
   validSolutionAndStatus(solution, expected, model, options)
 
-const testAll = test.macro((t, test: (t: ExecutionContext, data: SolvedTestCase) => void) => {
-  for (const data of testData) {
-    test(t, data)
-  }
+test.each(testData)("Validate test case solutions", data => {
+  expect(valid(data.solution, data))
 })
 
-test("Validate test case solutions", testAll, (t, data) => {
-  t.assert(valid(data.solution, data))
-})
-
-test("Variable order is preserved in solution (zero variables not included)", testAll, (t, { model, solution }) => {
+test.each(testData)("Variable order is preserved in solution (zero variables not included)", ({ model, solution }) => {
   // i.e., solution.variables should be a subsequence of data.variables
   let i = 0
   for (const [key] of solution.variables) {
@@ -33,20 +27,20 @@ test("Variable order is preserved in solution (zero variables not included)", te
       found = key === model.variables[i][0]
       i++
     }
-    t.assert(found)
+    expect(found)
   }
 })
 
-test("Variable order is preserved in solution (zero variables included)", testAll, (t, data) => {
+test.each(testData)("Variable order is preserved in solution (zero variables included)", data => {
   if (data.expected.status !== "optimal") return // model not applicable
   const { model } = data
   const options = { ...data.options, includeZeroVariables: true }
   const solution = solve(model, options)
-  t.deepEqual(keys(solution.variables), keys(model.variables))
-  t.assert(valid(solution, { ...data, options }))
+  expect(keys(solution.variables)).toStrictEqual(keys(model.variables))
+  expect(valid(solution, { ...data, options }))
 })
 
-test("Removing unused variables gives optimal solution", testAll, (t, data) => {
+test.each(testData)("Removing unused variables gives optimal solution", data => {
   const { model, solution } = data
   if (solution.status !== "optimal" || model.variables.length === solution.variables.length) return // model not applicable
 
@@ -62,10 +56,10 @@ test("Removing unused variables gives optimal solution", testAll, (t, data) => {
   }
 
   const removed = solve({ ...model, variables }, data.options)
-  t.assert(valid(removed, data))
+  expect(valid(removed, data))
 })
 
-test("Duplicating non-binary variable gives optimal solution", testAll, (t, data) => {
+test.each(testData)("Duplicating non-binary variable gives optimal solution", data => {
   const { model } = data
   const variables = model.variables.filter(([key]) => !model.binaries.has(key))
   if (variables.length === 0) return // model not applicable
@@ -73,10 +67,10 @@ test("Duplicating non-binary variable gives optimal solution", testAll, (t, data
   const rand = newRand(model.hash)
   variables.push(randomElement(rand, model.variables))
   const duplicate = solve({ ...model, variables }, data.options)
-  t.assert(valid(duplicate, data))
+  expect(valid(duplicate, data))
 })
 
-test("A more restrictive constraint that does not conflict with the optimal solution", testAll, (t, data) => {
+test.each(testData)("A more restrictive constraint that does not conflict with the optimal solution", data => {
   const { model, options, solution } = data
   // model not applicable, constraintSums does not reflect the actual/most optimal solution
   if (options.tolerance !== 0.0 || solution.status !== "cycled") return
@@ -108,10 +102,10 @@ test("A more restrictive constraint that does not conflict with the optimal solu
   constraints.push([key, { min, max }])
   const newModel = { ...model, constraints }
   const restricted = solve(newModel, data.options)
-  t.assert(valid(restricted, data))
+  expect(valid(restricted, data))
 })
 
-test("Tolerance option gives result in tolerance range", testAll, (t, data) => {
+test.each(testData)("Tolerance option gives result in tolerance range", data => {
   const { model } = data
   if (model.integers.size + model.binaries.size === 0) return // model not applicable
 
@@ -120,10 +114,10 @@ test("Tolerance option gives result in tolerance range", testAll, (t, data) => {
   const tolerance = rand() * (1.0 - tol) + tol
   const options = { ...data.options, tolerance }
   const solution = solve(model, options)
-  t.assert(valid(solution, { ...data, options }))
+  expect(valid(solution, { ...data, options }))
 })
 
-test("Timeout properly occurs", testAll, (t, data) => {
+test.each(testData)("Timeout properly occurs", data => {
   const { model } = data
   const n = model.integers.size
   if (n === 0) return // model not applicable
@@ -131,5 +125,5 @@ test("Timeout properly occurs", testAll, (t, data) => {
   const options = { ...data.options, timeout: n < 50 ? 0.0 : n / 25.0 }
   const expected: Solution = { ...data.expected, status: "timedout" }
   const solution = solve(model, options)
-  t.assert(valid(solution, { ...data, options, expected }))
+  expect(valid(solution, { ...data, options, expected }))
 })

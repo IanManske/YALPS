@@ -43,43 +43,18 @@
     "benchmark": "node --import=tsimp --expose-gc benchmarks/run.ts",
     "inspect": "node --import=tsimp --expose-gc --inspect-brk",
     "inspect:benchmark": "run-s \"inspect benchmarks/run.ts\"",
-    "test:build": "tsimp --start",
-    "test:run": "ava",
-    "test": "run-s test:build test:run",
-    "test:coverage:run": "c8 ava",
-    "test:coverage": "run-s test:build test:coverage:run",
     "watch": "tsc -w",
     "lint": "eslint .",
     "format": "prettier --write .",
+    "test": "vitest --run",
+    "test:coverage": "vitest --run --coverage",
+    "test:watch": "vitest --watch",
     "build:esm": "tsc",
     "build:cjs:main": "tsc -m commonjs --outDir lib/main",
     "build:cjs:copy": "cp build/main/package.json lib/main/package.json",
     "build:cjs": "run-s build:cjs:*",
     "build": "run-s build:*",
     "prepack": "run-s build"
-  },
-  "ava": {
-    "files": [
-      "tests/**",
-      "!tests/helpers/**",
-      "!tests/cases/**"
-    ],
-    "extensions": {
-      "ts": "module"
-    },
-    "nodeArguments": [
-      "--import=tsimp"
-    ],
-    "timeout": "30s"
-  },
-  "c8": {
-    "checkCoverage": true,
-    "lines": 95,
-    "functions": 95,
-    "branches": 95,
-    "statements": 95,
-    "include": "src/**",
-    "exclude": "src/constraint.ts"
   },
   "dependencies": {
     "heap": "^0.2.7"
@@ -89,8 +64,7 @@
     "@types/heap": "^0.2.34",
     "@types/node": "^20.11.20",
     "@typescript-eslint/eslint-plugin": "^8.46.2",
-    "ava": "^6.1.1",
-    "c8": "^9.1.0",
+    "@vitest/coverage-v8": "^4.0.6",
     "eslint": "~9.36.0",
     "eslint-config-prettier": "^10.1.8",
     "globals": "^16.5.0",
@@ -100,6 +74,7 @@
     "prettier": "^3.6.2",
     "tsimp": "^2.0.11",
     "typescript": "^5.3.3",
-    "typescript-eslint": "^8.46.2"
+    "typescript-eslint": "^8.46.2",
+    "vitest": "^4.0.6"
   }
 }
