@@ -147,11 +147,6 @@
       ]
     }
   },
-  "prettier": {
-    "printWidth": 120,
-    "semi": false,
-    "arrowParens": "avoid"
-  },
   "dependencies": {
     "heap": "^0.2.7"
   },
@@ -169,7 +164,7 @@
     "glpk.js": "^4.0.2",
     "javascript-lp-solver": "^0.4.24",
     "npm-run-all": "^4.1.5",
-    "prettier": "^3.2.5",
+    "prettier": "^3.6.2",
     "tsimp": "^2.0.11",
     "typescript": "^5.3.3"
   }

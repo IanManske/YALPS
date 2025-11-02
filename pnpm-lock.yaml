@@ -52,7 +52,7 @@ importers:
         specifier: ^4.1.5
         version: 4.1.5
       prettier:
-        specifier: ^3.2.5
+        specifier: ^3.6.2
         version: 3.6.2
       tsimp:
         specifier: ^2.0.11
