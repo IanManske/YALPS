@@ -4,15 +4,16 @@
     // Output
     "target": "ES2020",
     "module": "ES2020",
-    "outDir": "lib/module",
-    "declaration": true,
-    "declarationDir": "lib/types",
+    "noEmit": true,
+    "outDir": "lib",
 
     // Files and resolution
     "moduleResolution": "node",
     "isolatedModules": true,
     "forceConsistentCasingInFileNames": true,
     "esModuleInterop": true,
+
+    "skipLibCheck": true,
 
     // Code related
     "strict": true,
@@ -23,6 +24,5 @@
     "noPropertyAccessFromIndexSignature": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true
-  },
-  "include": ["src/**/*.ts"]
+  }
 }

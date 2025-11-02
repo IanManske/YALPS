@@ -4,17 +4,24 @@
   "description": "Yet another linear programming solver. (A rewrite of javascript-lp-solver.) Aims to be decently fast.",
   "homepage": "https://github.com/IanManske/YALPS",
   "files": [
-    "lib",
-    "!**/*.tsbuildinfo"
+    "lib"
   ],
-  "main": "lib/main/index.js",
-  "module": "lib/module/index.js",
-  "types": "lib/types/index.d.ts",
+  "main": "lib/index.cjs",
+  "module": "lib/index.js",
+  "types": "lib/index.d.ts",
   "exports": {
-    "types": "./lib/types/index.d.ts",
-    "import": "./lib/module/index.js",
-    "require": "./lib/main/index.js",
-    "default": "./lib/module/index.js"
+    "import": {
+      "types": "./lib/index.d.ts",
+      "default": "./lib/index.js"
+    },
+    "require": {
+      "types": "./lib/index.d.cts",
+      "default": "./lib/index.cjs"
+    },
+    "default": {
+      "types": "./lib/index.d.ts",
+      "default": "./lib/index.js"
+    }
   },
   "sideEffects": false,
   "type": "module",
@@ -48,15 +55,13 @@
     "test": "run-s test:build test:run",
     "test:coverage:run": "c8 ava",
     "test:coverage": "run-s test:build test:coverage:run",
-    "watch": "tsc -w",
-    "lint": "eslint .",
     "format": "prettier --write .",
-    "build:esm": "tsc",
-    "build:cjs:main": "tsc -m commonjs --outDir lib/main",
-    "build:cjs:copy": "cp build/main/package.json lib/main/package.json",
-    "build:cjs": "run-s build:cjs:*",
-    "build": "run-s build:*",
-    "prepare": "run-s build"
+    "lint": "eslint .",
+    "type-check": "tsc",
+    "watch": "tsup --clean src/index.ts -d lib --format esm,cjs --dts --watch",
+    "build": "tsup --clean src/index.ts -d lib --format esm,cjs --dts",
+    "prepack": "run-s build",
+    "postpack": "attw yalps-0.5.7.tgz"
   },
   "ava": {
     "files": [
@@ -83,9 +88,6 @@
   },
   "eslintConfig": {
     "parser": "@typescript-eslint/parser",
-    "parserOptions": {
-      "project": "tsconfig.eslint.json"
-    },
     "plugins": [
       "@typescript-eslint",
       "prefer-arrow"
@@ -156,6 +158,7 @@
     "heap": "^0.2.7"
   },
   "devDependencies": {
+    "@arethetypeswrong/cli": "^0.18.2",
     "@types/heap": "^0.2.34",
     "@types/node": "^20.11.20",
     "@typescript-eslint/eslint-plugin": "^6.21.0",
@@ -171,6 +174,7 @@
     "npm-run-all": "^4.1.5",
     "prettier": "^3.2.5",
     "tsimp": "^2.0.11",
+    "tsup": "^8.5.0",
     "typescript": "^5.3.3"
   }
 }
