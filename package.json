@@ -4,17 +4,21 @@
   "description": "Yet another linear programming solver. (A rewrite of javascript-lp-solver.) Aims to be decently fast.",
   "homepage": "https://github.com/IanManske/YALPS",
   "files": [
-    "lib",
-    "!**/*.tsbuildinfo"
+    "dist"
   ],
-  "main": "lib/main/index.js",
-  "module": "lib/module/index.js",
-  "types": "lib/types/index.d.ts",
+  "main": "dist/index.cjs",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "unpkg": "dist/index.min.js",
   "exports": {
-    "types": "./lib/types/index.d.ts",
-    "import": "./lib/module/index.js",
-    "require": "./lib/main/index.js",
-    "default": "./lib/module/index.js"
+    "import": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "require": {
+      "types": "./dist/index.d.cts",
+      "default": "./dist/index.cjs"
+    }
   },
   "sideEffects": false,
   "type": "module",
@@ -43,23 +47,26 @@
     "inspect": "node --import=tsimp --expose-gc --inspect-brk",
     "benchmark": "node --import=tsimp --expose-gc benchmarks/run.ts",
     "benchmark:inspect": "run-s \"inspect benchmarks/run.ts\"",
-    "watch": "tsc -w",
+    "format": "prettier --check .",
     "lint": "eslint .",
-    "format": "prettier --write .",
+    "type-check": "tsc",
+    "check": "run-s format lint type-check",
+    "format:fix": "prettier --write .",
+    "lint:fix": "eslint --fix .",
+    "fix": "run-s '*:fix'",
     "test": "vitest --run",
     "test:coverage": "vitest --run --coverage",
     "test:watch": "vitest --watch",
-    "build:esm": "tsc",
-    "build:cjs:main": "tsc -m commonjs --outDir lib/main",
-    "build:cjs:copy": "cp build/main/package.json lib/main/package.json",
-    "build:cjs": "run-s build:cjs:*",
-    "build": "run-s build:*",
+    "build": "tsup",
+    "build:watch": "tsup --watch",
+    "export-check": "attw --pack .",
     "prepack": "run-s build"
   },
   "dependencies": {
     "heap": "^0.2.7"
   },
   "devDependencies": {
+    "@arethetypeswrong/cli": "^0.18.2",
     "@eslint/js": "^9.39.0",
     "@types/heap": "^0.2.34",
     "@types/node": "^20.11.20",
@@ -73,6 +80,7 @@
     "npm-run-all": "^4.1.5",
     "prettier": "^3.6.2",
     "tsimp": "^2.0.11",
+    "tsup": "^8.5.0",
     "typescript": "^5.3.3",
     "typescript-eslint": "^8.46.2",
     "vitest": "^4.0.6"
