@@ -1,8 +1,8 @@
 import { Constraint, OptimizationDirection, Options, Solution, defaultOptions } from "../../src/index.js"
 import { hashString, lazy, valueMapping } from "./util.js"
 import { Benchmark } from "../../benchmarks/benchmark.js"
-import * as File from "node:fs"
-import * as Path from "node:path"
+import { readFileSync, readdirSync } from "node:fs"
+import path from "node:path"
 
 type JsonTestCase = {
   readonly model: {
@@ -34,13 +34,13 @@ export type TestCase = {
   readonly expected: Readonly<Solution>
 }
 
-export const allCases = lazy(() => File.readdirSync("tests/cases").map(file => Path.parse(file).name))
+export const allCases = lazy(() => readdirSync("tests/cases").map(file => path.parse(file).name))
 
 export const largeCases: readonly string[] = ["Monster 2", "Monster Problem", "Vendor Selection"]
 
 export const readCases = (cases?: readonly string[]): TestCase[] =>
   (cases ?? allCases()).map(file => {
-    const data = JSON.parse(File.readFileSync(`tests/cases/${file}.json`, "utf-8")) as JsonTestCase
+    const data = JSON.parse(readFileSync(`tests/cases/${file}.json`, "utf-8")) as JsonTestCase
 
     // hash the test case name as the random seed for reproducible tests
     const hash = hashString(file)

@@ -40,9 +40,9 @@
     "Linear Optimization"
   ],
   "scripts": {
-    "benchmark": "node --import=tsimp --expose-gc benchmarks/run.ts",
     "inspect": "node --import=tsimp --expose-gc --inspect-brk",
-    "inspect:benchmark": "run-s \"inspect benchmarks/run.ts\"",
+    "benchmark": "node --import=tsimp --expose-gc benchmarks/run.ts",
+    "benchmark:inspect": "run-s \"inspect benchmarks/run.ts\"",
     "watch": "tsc -w",
     "lint": "eslint .",
     "format": "prettier --write .",
