@@ -35,7 +35,7 @@ export type OptimizationDirection = "maximize" | "minimize"
 
 /**
  * The model representing a LP problem.
- * `constraints`, `variables`, and each variable's `Coefficients` can be either an object or an `Iterable`.
+ * `constraints`, `variables`, and each variable's {@link Coefficients} can be either an object or an `Iterable`.
  * The model is treated as readonly (recursively) by the solver, so nothing on it is mutated.
  *
  * @typeparam `VariableKey` - the type of the key used to distinguish variables.
@@ -43,7 +43,7 @@ export type OptimizationDirection = "maximize" | "minimize"
  *
  * @typeparam `ConstraintKey` - the type of the key used to distinguish constraints,
  * the objective, and the coefficients on each variable.
- * It should extend `string` if `constraints` or any variable's `Coefficients` is an object.
+ * It should extend `string` if `constraints` or any variable's {@link Coefficients} is an object.
  */
 export type Model<VariableKey = string, ConstraintKey = string> = {
   /**
@@ -59,11 +59,13 @@ export type Model<VariableKey = string, ConstraintKey = string> = {
    * Note that constraints can be placed upon the objective itself.
    * Maximize up to a certain point:
    * ```
-   * {
+   * const model = {
    *   direction: "maximize",
    *   objective: "obj",
    *   constraints: { obj: { max: 100 } },
-   *   variables: [ ... ]
+   *   variables: [
+   *     // ...
+   *   ]
    * }
    * ```
    */
@@ -73,7 +75,7 @@ export type Model<VariableKey = string, ConstraintKey = string> = {
    * An object or `Iterable` representing the constraints of the problem.
    * In the case `constraints` is an `Iterable`, duplicate keys are not ignored.
    * Rather, the bounds on the constraints are merged to become the most restrictive.
-   * @see `Constraint`
+   * @see {@link Constraint}
    * @example
    * Constraints as an object:
    * ```
@@ -133,6 +135,7 @@ export type Model<VariableKey = string, ConstraintKey = string> = {
 
   /**
    * An `Iterable` of variable keys that indicate the corresponding variables are integer.
+   * It is recommended to use a {@link Set} as the `Iterable`.
    * It can also be a `boolean`, indicating whether all variables are integer or not.
    * If this is left blank, then all variables are treated as not integer.
    */
@@ -141,6 +144,7 @@ export type Model<VariableKey = string, ConstraintKey = string> = {
   /**
    * An `Iterable` of variable keys that indicate the corresponding variables are binary
    * (can only be 0 or 1 in the solution).
+   * It is recommended to use a {@link Set} as the `Iterable`.
    * It can also be a `boolean`, indicating whether all variables are binary or not.
    * If this is left blank, then all variables are treated as not binary.
    */
@@ -149,7 +153,7 @@ export type Model<VariableKey = string, ConstraintKey = string> = {
 
 /**
  * This indicates what type of solution, if any, the solver was able to find.
- * @see `status` on `Solution` for detailed information.
+ * @see `status` on {@link Solution} for detailed information.
  */
 export type SolutionStatus = "optimal" | "infeasible" | "unbounded" | "timedout" | "cycled"
 
@@ -204,6 +208,7 @@ export type Options = {
   /**
    * Numbers with magnitude equal to or less than the provided precision are treated as zero.
    * Similarly, the precision determines whether a number is sufficiently integer.
+   *
    * The default value is `1e-8`.
    */
   readonly precision?: number
@@ -213,6 +218,7 @@ export type Options = {
    * This is assumed to be the case when the number of pivots exceeds `maxPivots`.
    * Setting this to `true` will cause the solver to explicitly check for cycles and stop early if one is found.
    * Note that checking for cycles may incur a small performance overhead.
+   *
    * The default value is `false`.
    */
   readonly checkCycles?: boolean
@@ -222,6 +228,7 @@ export type Options = {
    * If this is exceeded, then it assumed that the simplex method cycled,
    * and the returned solution will have the `"cycled"` status.
    * If your problem is very large, you may have to set this option higher.
+   *
    * The default value is `8192`.
    */
   readonly maxPivots?: number
@@ -234,6 +241,7 @@ export type Options = {
    * For example, a tolerance of `0.05` will return the first integer solution found within 5% of the non-integer solution.
    * This option is helpful for large integer problems where the most optimal solution becomes harder to find,
    * but approximate or near-optimal solutions may be much easier to find.
+   *
    * The default value is `0` (only find the most optimal solution).
    */
   readonly tolerance?: number
@@ -244,6 +252,7 @@ export type Options = {
    * the main branch and cut portion of the solver may take before timing out.
    * If a time out occurs, the returned solution will have the `"timedout"` status.
    * Also, if any sub-optimal solution was found before the time out, then it is returned as well.
+   *
    * The default value is `Infinity` (no timeout).
    */
   readonly timeout?: number
@@ -252,13 +261,15 @@ export type Options = {
    * This option applies to integer problems only.
    * It determines the maximum number of iterations for the main branch and cut algorithm.
    * It can be used alongside or instead of `timeout` to prevent the solver from taking too long.
+   *
    * The default value is `32768`.
    */
   readonly maxIterations?: number
 
   /**
    * Controls whether variables that end up having a value of `0`
-   * should be included in `variables` in the resulting `Solution`.
+   * should be included in `variables` in the resulting {@link Solution}.
+   *
    * The default value is `false`.
    */
   readonly includeZeroVariables?: boolean
