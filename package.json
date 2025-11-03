@@ -10,6 +10,7 @@
   "module": "dist/index.js",
   "types": "dist/index.d.ts",
   "unpkg": "dist/index.min.js",
+  "jsdelivr": "dist/index.min.js",
   "exports": {
     "import": {
       "types": "./dist/index.d.ts",
