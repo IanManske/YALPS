@@ -111,9 +111,9 @@ For more extensive documentation, use the JSDoc annotations / hover information 
 In case you need it, a minified version of the code is available under `dist/index.min.js`. When loading this file as a script, YALPS will be available as a global variable named `YALPS`:
 
 ```html
-<script src="https://unpkg.com/yalps@0.6.0/dist/index.min.js"></script>
+<script src="https://unpkg.com/yalps@0.6.3/dist/index.min.js"></script>
 <!-- For unpkg, `dist/index.min.js` is the default, so you can choose to omit it. -->
-<!-- <script src="https://unpkg.com/yalps@0.6.0"></script> -->
+<!-- <script src="https://unpkg.com/yalps@0.6.3"></script> -->
 <script>
   const { solve } = YALPS
   /* your code */
@@ -123,9 +123,9 @@ In case you need it, a minified version of the code is available under `dist/ind
 Like unpkg above, a similar shorthand is also supported for jsdelivr:
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/yalps@0.6.0"></script>
+<script src="https://cdn.jsdelivr.net/npm/yalps@0.6.3"></script>
 <!-- Same as the below -->
-<!-- <script src="https://cdn.jsdelivr.net/npm/yalps@0.6.0/dist/index.min.js"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/yalps@0.6.3/dist/index.min.js"></script> -->
 <script>
   const { solve } = YALPS
   /* your code */
