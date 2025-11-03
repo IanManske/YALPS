@@ -1,5 +1,9 @@
 # Changelog
 
+# v0.6.2
+
+- Remove reference to minified ES module code, since it doesn't work at the moment.
+
 # v0.6.1
 
 - Added jsdelivr field to package json.

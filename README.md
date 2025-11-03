@@ -108,25 +108,7 @@ For more extensive documentation, use the JSDoc annotations / hover information 
 
 ## In the browser
 
-In case you need them, minified versions of the code are available under `dist/index.min.js` and `dist/index.min.module.js`.
-
-`index.min.module.js` is an ES module, so you can import YALPS like normal with the proper import maps:
-
-```html
-<script type="importmap">
-  {
-    "imports": {
-      "yalps": "https://unpkg.com/yalps@0.6.0/dist/index.min.module.js"
-    }
-  }
-</script>
-<script type="module">
-  import { solve } from "yalps"
-  /* your code */
-</script>
-```
-
-When using `index.min.js`, YALPS will be loaded as a global variable named `YALPS`:
+In case you need it, a minified version of the code is available under `dist/index.min.js`. When loading this file as a script, YALPS will be available as a global variable named `YALPS`:
 
 ```html
 <script src="https://unpkg.com/yalps@0.6.0/dist/index.min.js"></script>
