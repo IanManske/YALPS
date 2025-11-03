@@ -118,7 +118,7 @@ export const benchmark = (
     const { model } = bench
     const numInteger = model.integers.size + model.binaries.size
     console.log(
-      `${bench.name}: ${model.constraints.size} constraints, ${model.variables.size} variables, ${numInteger} integers:`,
+      `${bench.name}: ${model.constraints.size.toString()} constraints, ${model.variables.size.toString()} variables, ${numInteger.toString()} integers:`,
     )
     console.table(resultsTable(sampleBenchmark(solvers, bench, numSamples)))
     console.log("")

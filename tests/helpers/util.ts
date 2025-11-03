@@ -11,7 +11,7 @@ export const enumerate = <T>(array: readonly T[]) => array.map((x, i): [number, 
 export const lazy = <T>(thunk: () => T) => {
   let value: T | null = null
   return () => {
-    if (value == null) value = thunk()
+    value ??= thunk()
     return value
   }
 }
@@ -36,11 +36,11 @@ export const hashString = (s: string) => {
 }
 
 export const newRand = (seed: number) => () => {
-  seed += 0x9e3779b9 // eslint-disable-line
+  seed += 0x9e3779b9
   return (prospectorHash(seed) >>> 0) / 4294967296
 }
 
-export const randomIndex = <T>(rand: () => number, array: readonly T[], startingIndex = 0) =>
+export const randomIndex = (rand: () => number, array: readonly unknown[], startingIndex = 0) =>
   Math.trunc(rand() * (array.length - startingIndex)) + startingIndex
 
 export const randomElement = <T>(rand: () => number, array: readonly T[]) => array[randomIndex(rand, array)]

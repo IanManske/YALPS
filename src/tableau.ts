@@ -31,11 +31,12 @@ export type TableauModel<VariableKey = string, ConstraintKey = string> = {
 }
 
 const convertToIterable = <K, V>(
-  seq: Iterable<readonly [K, V]> | ([K] extends [string] ? { readonly [key in K]?: V } : never),
+  seq: Iterable<readonly [K, V]> | ([K] extends [string] ? Readonly<Partial<Record<K, V>>> : never),
 ) =>
-  typeof (seq as any)[Symbol.iterator] === "function" // eslint-disable-line
-    ? (seq as Iterable<readonly [K, V]>)
-    : (Object.entries(seq) as Iterable<readonly [K, V]>)
+  Symbol.iterator in seq && typeof seq[Symbol.iterator] === "function"
+    ? seq
+    : // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion
+      (Object.entries(seq) as Iterable<readonly [K, V]>)
 
 // prettier-ignore
 const convertToSet = <T>(set: boolean | Iterable<T> | undefined): true | Set<T> =>

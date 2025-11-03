@@ -1,7 +1,8 @@
-declare module "javascript-lp-solver" {
-  // The typescript declaration file is not included in the package even though it exists
-  // https://github.com/JWally/jsLPSolver/blob/master/types/main.d.ts
+/* eslint-disable @typescript-eslint/consistent-indexed-object-style */
 
+// The typescript declaration file is not included in the package even though it exists
+// https://github.com/JWally/jsLPSolver/blob/master/types/main.d.ts
+declare module "javascript-lp-solver" {
   /**
    * Specifies how to constrain a variable in the model.
    */

@@ -56,7 +56,7 @@
     "build:cjs:copy": "cp build/main/package.json lib/main/package.json",
     "build:cjs": "run-s build:cjs:*",
     "build": "run-s build:*",
-    "prepare": "run-s build"
+    "prepack": "run-s build"
   },
   "ava": {
     "files": [
@@ -81,91 +81,25 @@
     "include": "src/**",
     "exclude": "src/constraint.ts"
   },
-  "eslintConfig": {
-    "parser": "@typescript-eslint/parser",
-    "parserOptions": {
-      "project": "tsconfig.eslint.json"
-    },
-    "plugins": [
-      "@typescript-eslint",
-      "prefer-arrow"
-    ],
-    "ignorePatterns": [
-      "lib/**"
-    ],
-    "extends": [
-      "plugin:@typescript-eslint/recommended",
-      "plugin:@typescript-eslint/recommended-requiring-type-checking",
-      "plugin:@typescript-eslint/strict",
-      "standard-with-typescript",
-      "prettier"
-    ],
-    "rules": {
-      "no-var": "error",
-      "object-shorthand": "error",
-      "no-constant-binary-expression": "error",
-      "no-constructor-return": "error",
-      "init-declarations": "error",
-      "no-new-native-nonconstructor": "error",
-      "no-implicit-coercion": "error",
-      "no-multi-assign": "error",
-      "no-param-reassign": "error",
-      "no-useless-concat": "error",
-      "prefer-arrow-callback": "error",
-      "prefer-destructuring": "error",
-      "prefer-object-spread": "error",
-      "prefer-template": "error",
-      "yoda": [
-        "error",
-        "never",
-        {
-          "exceptRange": true
-        }
-      ],
-      "@typescript-eslint/array-type": [
-        "error",
-        {
-          "default": "array"
-        }
-      ],
-      "@typescript-eslint/consistent-type-definitions": [
-        "error",
-        "type"
-      ],
-      "@typescript-eslint/consistent-type-imports": "off",
-      "@typescript-eslint/explicit-function-return-type": "off",
-      "@typescript-eslint/no-non-null-assertion": "off",
-      "@typescript-eslint/no-require-imports": "error",
-      "@typescript-eslint/prefer-for-of": "off",
-      "@typescript-eslint/no-useless-empty-export": "error",
-      "@typescript-eslint/default-param-last": "error",
-      "prefer-arrow/prefer-arrow-functions": [
-        "error",
-        {
-          "disallowPrototype": true
-        }
-      ]
-    }
-  },
   "dependencies": {
     "heap": "^0.2.7"
   },
   "devDependencies": {
+    "@eslint/js": "^9.39.0",
     "@types/heap": "^0.2.34",
     "@types/node": "^20.11.20",
-    "@typescript-eslint/eslint-plugin": "^6.21.0",
-    "@typescript-eslint/parser": "^6.21.0",
+    "@typescript-eslint/eslint-plugin": "^8.46.2",
     "ava": "^6.1.1",
     "c8": "^9.1.0",
-    "eslint": "^8.57.0",
-    "eslint-config-prettier": "^9.1.0",
-    "eslint-config-standard-with-typescript": "^43.0.1",
-    "eslint-plugin-prefer-arrow": "^1.2.3",
+    "eslint": "~9.36.0",
+    "eslint-config-prettier": "^10.1.8",
+    "globals": "^16.5.0",
     "glpk.js": "^4.0.2",
     "javascript-lp-solver": "^0.4.24",
     "npm-run-all": "^4.1.5",
     "prettier": "^3.6.2",
     "tsimp": "^2.0.11",
-    "typescript": "^5.3.3"
+    "typescript": "^5.3.3",
+    "typescript-eslint": "^8.46.2"
   }
 }

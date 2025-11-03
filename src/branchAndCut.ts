@@ -120,6 +120,7 @@ export const branchAndCut = <VarKey, ConKey>(
   let iter = 0
 
   while (iter < maxIterations && !branches.empty() && bestEval >= optimalThreshold && !timedout) {
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const [relaxedEval, cuts] = branches.pop()!
     if (relaxedEval > bestEval) break // the remaining branches are worse than the current best solution
 
@@ -144,7 +145,11 @@ export const branchAndCut = <VarKey, ConKey>(
           const cut = cuts[i]
           const [dir, v] = cut
           if (v === variable) {
-            dir < 0 ? cutsLower.push(cut) : cutsUpper.push(cut)
+            if (dir < 0) {
+              cutsLower.push(cut)
+            } else {
+              cutsUpper.push(cut)
+            }
           } else {
             cutsUpper.push(cut)
             cutsLower.push(cut)
