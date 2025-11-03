@@ -4,17 +4,21 @@
   "description": "Yet another linear programming solver. (A rewrite of javascript-lp-solver.) Aims to be decently fast.",
   "homepage": "https://github.com/IanManske/YALPS",
   "files": [
-    "lib",
-    "!**/*.tsbuildinfo"
+    "dist"
   ],
-  "main": "lib/main/index.js",
-  "module": "lib/module/index.js",
-  "types": "lib/types/index.d.ts",
+  "main": "dist/index.cjs",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "unpkg": "dist/index.min.js",
   "exports": {
-    "types": "./lib/types/index.d.ts",
-    "import": "./lib/module/index.js",
-    "require": "./lib/main/index.js",
-    "default": "./lib/module/index.js"
+    "import": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "require": {
+      "types": "./dist/index.d.cts",
+      "default": "./dist/index.cjs"
+    }
   },
   "sideEffects": false,
   "type": "module",
@@ -40,137 +44,45 @@
     "Linear Optimization"
   ],
   "scripts": {
-    "benchmark": "node --import=tsimp --expose-gc benchmarks/run.ts",
     "inspect": "node --import=tsimp --expose-gc --inspect-brk",
-    "inspect:benchmark": "run-s \"inspect benchmarks/run.ts\"",
-    "test:build": "tsimp --start",
-    "test:run": "ava",
-    "test": "run-s test:build test:run",
-    "test:coverage:run": "c8 ava",
-    "test:coverage": "run-s test:build test:coverage:run",
-    "watch": "tsc -w",
+    "benchmark": "node --import=tsimp --expose-gc benchmarks/run.ts",
+    "benchmark:inspect": "run-s \"inspect benchmarks/run.ts\"",
+    "format": "prettier --check .",
     "lint": "eslint .",
-    "format": "prettier --write .",
-    "build:esm": "tsc",
-    "build:cjs:main": "tsc -m commonjs --outDir lib/main",
-    "build:cjs:copy": "cp build/main/package.json lib/main/package.json",
-    "build:cjs": "run-s build:cjs:*",
-    "build": "run-s build:*",
-    "prepare": "run-s build"
-  },
-  "ava": {
-    "files": [
-      "tests/**",
-      "!tests/helpers/**",
-      "!tests/cases/**"
-    ],
-    "extensions": {
-      "ts": "module"
-    },
-    "nodeArguments": [
-      "--import=tsimp"
-    ],
-    "timeout": "30s"
-  },
-  "c8": {
-    "checkCoverage": true,
-    "lines": 95,
-    "functions": 95,
-    "branches": 95,
-    "statements": 95,
-    "include": "src/**",
-    "exclude": "src/constraint.ts"
-  },
-  "eslintConfig": {
-    "parser": "@typescript-eslint/parser",
-    "parserOptions": {
-      "project": "tsconfig.eslint.json"
-    },
-    "plugins": [
-      "@typescript-eslint",
-      "prefer-arrow"
-    ],
-    "ignorePatterns": [
-      "lib/**"
-    ],
-    "extends": [
-      "plugin:@typescript-eslint/recommended",
-      "plugin:@typescript-eslint/recommended-requiring-type-checking",
-      "plugin:@typescript-eslint/strict",
-      "standard-with-typescript",
-      "prettier"
-    ],
-    "rules": {
-      "no-var": "error",
-      "object-shorthand": "error",
-      "no-constant-binary-expression": "error",
-      "no-constructor-return": "error",
-      "init-declarations": "error",
-      "no-new-native-nonconstructor": "error",
-      "no-implicit-coercion": "error",
-      "no-multi-assign": "error",
-      "no-param-reassign": "error",
-      "no-useless-concat": "error",
-      "prefer-arrow-callback": "error",
-      "prefer-destructuring": "error",
-      "prefer-object-spread": "error",
-      "prefer-template": "error",
-      "yoda": [
-        "error",
-        "never",
-        {
-          "exceptRange": true
-        }
-      ],
-      "@typescript-eslint/array-type": [
-        "error",
-        {
-          "default": "array"
-        }
-      ],
-      "@typescript-eslint/consistent-type-definitions": [
-        "error",
-        "type"
-      ],
-      "@typescript-eslint/consistent-type-imports": "off",
-      "@typescript-eslint/explicit-function-return-type": "off",
-      "@typescript-eslint/no-non-null-assertion": "off",
-      "@typescript-eslint/no-require-imports": "error",
-      "@typescript-eslint/prefer-for-of": "off",
-      "@typescript-eslint/no-useless-empty-export": "error",
-      "@typescript-eslint/default-param-last": "error",
-      "prefer-arrow/prefer-arrow-functions": [
-        "error",
-        {
-          "disallowPrototype": true
-        }
-      ]
-    }
-  },
-  "prettier": {
-    "printWidth": 120,
-    "semi": false,
-    "arrowParens": "avoid"
+    "type-check": "tsc",
+    "check": "run-s format lint type-check",
+    "format:fix": "prettier --write .",
+    "lint:fix": "eslint --fix .",
+    "fix": "run-s '*:fix'",
+    "test": "vitest --run",
+    "test:coverage": "vitest --run --coverage",
+    "test:watch": "vitest --watch",
+    "build": "tsup",
+    "build:watch": "tsup --watch",
+    "export-check": "attw --pack .",
+    "prepack": "run-s build"
   },
   "dependencies": {
     "heap": "^0.2.7"
   },
   "devDependencies": {
+    "@arethetypeswrong/cli": "^0.18.2",
+    "@eslint/js": "^9.39.0",
     "@types/heap": "^0.2.34",
     "@types/node": "^20.11.20",
-    "@typescript-eslint/eslint-plugin": "^6.21.0",
-    "@typescript-eslint/parser": "^6.21.0",
-    "ava": "^6.1.1",
-    "c8": "^9.1.0",
-    "eslint": "^8.57.0",
-    "eslint-config-prettier": "^9.1.0",
-    "eslint-config-standard-with-typescript": "^43.0.1",
-    "eslint-plugin-prefer-arrow": "^1.2.3",
+    "@typescript-eslint/eslint-plugin": "^8.46.2",
+    "@vitest/coverage-v8": "^4.0.6",
+    "eslint": "~9.36.0",
+    "eslint-config-prettier": "^10.1.8",
+    "globals": "^16.5.0",
     "glpk.js": "^4.0.2",
     "javascript-lp-solver": "^0.4.24",
     "npm-run-all": "^4.1.5",
-    "prettier": "^3.2.5",
+    "prettier": "^3.6.2",
     "tsimp": "^2.0.11",
-    "typescript": "^5.3.3"
+    "tsup": "^8.5.0",
+    "typescript": "^5.3.3",
+    "typescript-eslint": "^8.46.2",
+    "vitest": "^4.0.6"
   }
 }

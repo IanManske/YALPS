@@ -1,7 +1,7 @@
 import { Constraint, defaultOptions, Options } from "../../src/index.js"
 import { Benchmark } from "../benchmark.js"
 import { ModelFromMPS, modelFromMps } from "../mps.js"
-import * as File from "node:fs"
+import { readFileSync } from "node:fs"
 
 type IndexEntry = {
   name: string
@@ -11,7 +11,7 @@ type IndexEntry = {
   options?: Options
 }
 
-const readIndex = () => JSON.parse(File.readFileSync("benchmarks/netlib/index.json", "utf-8")) as IndexEntry[]
+const readIndex = () => JSON.parse(readFileSync("benchmarks/netlib/index.json", "utf-8")) as IndexEntry[]
 
 const convertConstraints = (map: ModelFromMPS["constraints"]) => {
   const constraints = new Map<string, Constraint>()
@@ -35,7 +35,7 @@ export const readBenchmarks = (benchmarks?: readonly string[]): Benchmark[] =>
     .filter(b => b.rows * b.cols >= 10_000) // problems of significant size worth benchmarking
     .map(benchmark => {
       try {
-        const mps = File.readFileSync(`benchmarks/netlib/cases/${benchmark.name.toLowerCase()}.mps`, "utf-8")
+        const mps = readFileSync(`benchmarks/netlib/cases/${benchmark.name.toLowerCase()}.mps`, "utf-8")
         const mpsModel = modelFromMps(mps, "minimize")
         const constraints = convertConstraints(mpsModel.constraints)
         const model = { ...mpsModel, constraints }
@@ -46,7 +46,7 @@ export const readBenchmarks = (benchmarks?: readonly string[]): Benchmark[] =>
         return null
       }
     })
-    .filter((x): x is Exclude<typeof x, null> => x != null)
+    .filter(x => x != null)
     .filter(bench => bench.model.bounds.size === 0) // bounds are currently unsupported
 
 // of the benchmarks not filtered out by the function above,

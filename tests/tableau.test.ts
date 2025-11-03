@@ -2,14 +2,14 @@ import { Coefficients, Constraint, Model } from "../src/index.js"
 import { tableauModel, index, TableauModel } from "../src/tableau.js"
 import { TupleArray, TestCase, testCases } from "./helpers/read.js"
 import { keys, newRand, randomIndex, randomElement, sample, enumerate, valueMapping } from "./helpers/util.js"
-import test, { ExecutionContext } from "ava"
+import { test, expect } from "vitest"
 
-const testData: readonly TestCase[] = testCases()
+const testData = testCases().map(({ model }) => model)
 
 // deepEquals uses Object.is (sameValue algorithm) instead of sameValueZero algorithm, so deepEquals(0, -0) === false
 const negate = (x: number) => (x === 0.0 ? 0.0 : -x)
 
-test("Empty model", t => {
+test.each(testData)("Empty model", () => {
   const result = tableauModel({ variables: {}, constraints: {} })
   const expected = {
     tableau: {
@@ -23,13 +23,7 @@ test("Empty model", t => {
     variables: [],
     integers: [],
   }
-  t.deepEqual(result, expected)
-})
-
-const testAll = test.macro((t, test: (t: ExecutionContext, model: TestCase["model"]) => void) => {
-  for (const data of testData) {
-    test(t, data.model)
-  }
+  expect(result).toStrictEqual(expected)
 })
 
 const tableauFromModelWith =
@@ -46,14 +40,14 @@ const tableauFrom: { [key in keyof Model]-?: (model: Model, value: Model[key]) =
   binaries: tableauFromModelWith("binaries"),
 }
 
-test("Objective row is zero if no objective is given", testAll, (t, model) => {
+test.each(testData)("Objective row is zero if no objective is given", model => {
   const result = tableauFrom.objective(model, undefined)
   const expected = tableauModel(model)
   expected.tableau.matrix.fill(0.0, 0, expected.tableau.width)
-  t.deepEqual(result, expected)
+  expect(result).toStrictEqual(expected)
 })
 
-test("Objective row and sign are negated for opposite optimization direction", testAll, (t, model) => {
+test.each(testData)("Objective row and sign are negated for opposite optimization direction", model => {
   const direction = model.direction === "minimize" ? "maximize" : "minimize"
   const result = tableauFrom.direction(model, direction)
 
@@ -63,7 +57,7 @@ test("Objective row and sign are negated for opposite optimization direction", t
   }
   ;(expected as any).sign = -expected.sign // eslint-disable-line
 
-  t.deepEqual(result, expected)
+  expect(result).toStrictEqual(expected)
 })
 
 const numRows = (constraint: Constraint) =>
@@ -72,7 +66,7 @@ const numRows = (constraint: Constraint) =>
 const rowOfConstraint = (constraints: TestCase["model"]["constraints"], index: number) =>
   constraints.slice(0, index).reduce((sum, [, con]) => sum + numRows(con), 1)
 
-test("Objective can share the same key as a constraint", testAll, (t, model) => {
+test.each(testData)("Objective can share the same key as a constraint", model => {
   const rand = newRand(model.hash)
   const conIndex = randomIndex(rand, model.constraints)
   const [key, constraint] = model.constraints[conIndex]
@@ -98,26 +92,26 @@ test("Objective can share the same key as a constraint", testAll, (t, model) => 
     expected.tableau.matrix[c] = value === 0.0 ? 0.0 : expected.sign * sign * value
   }
 
-  t.deepEqual(result, expected)
+  expect(result).toStrictEqual(expected)
 })
 
-test("Constraints as an object, array, and map", testAll, (t, model) => {
+test.each(testData)("Constraints as an object, array, and map", model => {
   const map = tableauFrom.constraints(model, new Map(model.constraints))
   const object = tableauFrom.constraints(model, Object.fromEntries(model.constraints))
   const array = tableauModel(model)
-  t.deepEqual(map, array)
-  t.deepEqual(object, array)
+  expect(map).toStrictEqual(array)
+  expect(object).toStrictEqual(array)
 })
 
-test("Variables an an object, array, and map", testAll, (t, model) => {
+test.each(testData)("Variables an an object, array, and map", model => {
   const map = tableauFrom.variables(model, new Map(model.variables))
   const object = tableauFrom.variables(model, Object.fromEntries(model.variables))
   const array = tableauModel(model)
-  t.deepEqual(map, array)
-  t.deepEqual(object, array)
+  expect(map).toStrictEqual(array)
+  expect(object).toStrictEqual(array)
 })
 
-test("Coefficients as an object, array, and map", testAll, (t, model) => {
+test.each(testData)("Coefficients as an object, array, and map", model => {
   const mapVariables = (mapping: (variable: TupleArray<string, number>) => Coefficients) =>
     tableauFrom.variables(model, model.variables.map(valueMapping(mapping)))
 
@@ -125,72 +119,73 @@ test("Coefficients as an object, array, and map", testAll, (t, model) => {
   const object = mapVariables(Object.fromEntries)
   const array = tableauModel(model)
 
-  const equal = (a: TableauModel, b: TableauModel) =>
-    t.deepEqual({ ...a, variables: keys(a.variables) }, { ...b, variables: keys(b.variables) })
+  const equal = (a: TableauModel, b: TableauModel) => {
+    expect({ ...a, variables: keys(a.variables) }).toStrictEqual({ ...b, variables: keys(b.variables) })
+  }
 
   equal(map, array)
   equal(object, array)
 })
 
-test("No variables marked as integer", testAll, (t, model) => {
+test.each(testData)("No variables marked as integer", model => {
   const boolNone = tableauFrom.integers(model, false)
   const setNone = tableauFrom.integers(model, new Set())
   const iterNone = tableauFrom.integers(model, [])
-  t.deepEqual(boolNone, setNone)
-  t.deepEqual(iterNone, setNone)
+  expect(boolNone).toStrictEqual(setNone)
+  expect(iterNone).toStrictEqual(setNone)
 })
 
-test("All variables marked as integer", testAll, (t, model) => {
+test.each(testData)("All variables marked as integer", model => {
   const varKeys = keys(model.variables)
   const boolAll = tableauFrom.integers(model, true)
   const setAll = tableauFrom.integers(model, new Set(varKeys))
   const iterAll = tableauFrom.integers(model, varKeys)
-  t.deepEqual(boolAll, setAll)
-  t.deepEqual(iterAll, setAll)
+  expect(boolAll).toStrictEqual(setAll)
+  expect(iterAll).toStrictEqual(setAll)
 })
 
-test("Integers as a set and array", testAll, (t, model) => {
+test.each(testData)("Integers as a set and array", model => {
   const rand = newRand(model.hash)
   const varSample = sample(rand, keys(model.variables))
   const setSample = tableauFrom.integers(model, new Set(varSample))
   const iterSample = tableauFrom.integers(model, varSample)
-  t.deepEqual(iterSample, setSample)
+  expect(iterSample).toStrictEqual(setSample)
 })
 
-test("No variables marked as binary", testAll, (t, model) => {
+test.each(testData)("No variables marked as binary", model => {
   const boolNone = tableauFrom.binaries(model, false)
   const setNone = tableauFrom.binaries(model, new Set())
   const iterNone = tableauFrom.binaries(model, [])
-  t.deepEqual(boolNone, setNone)
-  t.deepEqual(iterNone, setNone)
+  expect(boolNone).toStrictEqual(setNone)
+  expect(iterNone).toStrictEqual(setNone)
 })
 
-test("All variables marked as binary", testAll, (t, model) => {
+test.each(testData)("All variables marked as binary", model => {
   const varKeys = keys(model.variables)
   const boolTrue = tableauFrom.binaries(model, true)
   const setAll = tableauFrom.binaries(model, new Set(varKeys))
   const iterAll = tableauFrom.binaries(model, varKeys)
-  t.deepEqual(boolTrue, setAll)
-  t.deepEqual(iterAll, setAll)
+  expect(boolTrue).toStrictEqual(setAll)
+  expect(iterAll).toStrictEqual(setAll)
 })
 
-test("Binaries as a set and array", testAll, (t, model) => {
+test.each(testData)("Binaries as a set and array", model => {
   const rand = newRand(model.hash)
   const varSample = sample(rand, keys(model.variables))
   const set = tableauFrom.binaries(model, new Set(varSample))
   const iter = tableauFrom.binaries(model, varSample)
-  t.deepEqual(iter, set)
+  expect(iter).toStrictEqual(set)
 })
 
-test("Binary has higher precedence than integer", testAll, (t, model) => {
+test.each(testData)("Binary has higher precedence than integer", model => {
   const rand = newRand(model.hash)
   const [key] = randomElement(rand, model.variables)
   const result = tableauModel({ ...model, integers: [key], binaries: [key] })
   const expected = tableauModel({ ...model, integers: [], binaries: [key] })
-  t.deepEqual(result, expected)
+  expect(result).toStrictEqual(expected)
 })
 
-test("Swapping bound direction gives negated constraint row", testAll, (t, model) => {
+test.each(testData)("Swapping bound direction gives negated constraint row", model => {
   const constraints = enumerate(model.constraints).filter(
     ([, [, con]]) => con.equal == null && (con.max == null) !== (con.min == null),
   )
@@ -217,10 +212,10 @@ test("Swapping bound direction gives negated constraint row", testAll, (t, model
     expected.tableau.matrix[i] = negate(expected.tableau.matrix[i])
   }
 
-  t.deepEqual(result, expected)
+  expect(result).toStrictEqual(expected)
 })
 
-test("Equal has higher precedence than min and max", testAll, (t, model) => {
+test.each(testData)("Equal has higher precedence than min and max", model => {
   const constraints = enumerate(model.constraints).filter(([, [, con]]) => con.equal != null)
   if (constraints.length === 0) return // model not applicable
 
@@ -238,10 +233,10 @@ test("Equal has higher precedence than min and max", testAll, (t, model) => {
 
   const expected = tableauModel(model)
 
-  t.deepEqual(result, expected)
+  expect(result).toStrictEqual(expected)
 })
 
-test("Constraints with the same key are merged", testAll, (t, model) => {
+test.each(testData)("Constraints with the same key are merged", model => {
   const rand = newRand(model.hash)
   const index = randomIndex(rand, model.constraints)
   const [key, constraint] = model.constraints[index]
@@ -261,10 +256,10 @@ test("Constraints with the same key are merged", testAll, (t, model) => {
   constraints[index] = [key, merged]
   const expected = tableauFrom.constraints(model, constraints)
 
-  t.deepEqual(result, expected)
+  expect(result).toStrictEqual(expected)
 })
 
-test("Duplicate variable keys do not affect matrix", testAll, (t, model) => {
+test.each(testData)("Duplicate variable keys do not affect matrix", model => {
   const rand = newRand(model.hash)
   const indexCopy = randomIndex(rand, model.variables)
   const [key] = model.variables[indexCopy]
@@ -276,10 +271,10 @@ test("Duplicate variable keys do not affect matrix", testAll, (t, model) => {
   const expected = tableauModel(model) as any // eslint-disable-line
   expected.variables[indexChange][0] = key // eslint-disable-line
 
-  t.deepEqual(result, expected)
+  expect(result).toStrictEqual(expected)
 })
 
-test("Last value is used for coefficients with the same key", testAll, (t, model) => {
+test.each(testData)("Last value is used for coefficients with the same key", model => {
   const rand = newRand(model.hash)
   const varIndex = randomIndex(rand, model.variables)
   const [varKey, variable] = model.variables[varIndex]
@@ -296,7 +291,7 @@ test("Last value is used for coefficients with the same key", testAll, (t, model
   const expected = tableauModel(model) as any // eslint-disable-line
   expected.variables[varIndex] = [varKey, newVariable] // eslint-disable-line
 
-  t.deepEqual(result, expected)
+  expect(result).toStrictEqual(expected)
 })
 
 const removeIndex = <T>(array: readonly T[], index: number) => {
@@ -305,7 +300,7 @@ const removeIndex = <T>(array: readonly T[], index: number) => {
   return remove
 }
 
-test("Removing a constraint gives less rows", testAll, (t, model) => {
+test.each(testData)("Removing a constraint gives less rows", model => {
   const rand = newRand(model.hash)
   const index = randomIndex(rand, model.constraints)
   const result = tableauFrom.constraints(model, removeIndex(model.constraints, index))
@@ -329,10 +324,10 @@ test("Removing a constraint gives less rows", testAll, (t, model) => {
     ...tableauRest,
   }
 
-  t.deepEqual(result, expected)
+  expect(result).toStrictEqual(expected)
 })
 
-test("Removing a variable gives one less column (and one row if binary)", testAll, (t, model) => {
+test.each(testData)("Removing a variable gives one less column (and one row if binary)", model => {
   const rand = newRand(model.hash)
   const index = randomIndex(rand, model.variables)
   const result = tableauFrom.variables(model, removeIndex(model.variables, index))
@@ -374,5 +369,5 @@ test("Removing a variable gives one less column (and one row if binary)", testAl
     integers: integers.filter(x => x !== index + 1).map(x => (x <= index ? x : x - 1)),
   }
 
-  t.deepEqual(result, expected)
+  expect(result).toStrictEqual(expected)
 })

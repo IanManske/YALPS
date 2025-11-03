@@ -319,7 +319,7 @@ export const modelFromMps = (mps: string, direction?: OptimizationDirection): Mo
   }
 
   const error = readName(parseState, model)
-  if (error != null) throw new Error(`Line ${parseState.index + 1}: ${error.message}`)
+  if (error != null) throw new Error(`Line ${(parseState.index + 1).toString()}: ${error.message}`)
 
   return model
 }

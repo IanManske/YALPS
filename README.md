@@ -23,7 +23,7 @@ On the other hand, these features from jsLPSolver were dropped:
 
 ## Installation
 
-```
+```sh
 npm i yalps
 ```
 
@@ -35,7 +35,7 @@ The main solve function:
 import { solve } from "yalps"
 ```
 
-Alternate helper functions:
+Optional helper functions:
 
 ```typescript
 import { lessEq, equalTo, greaterEq, inRange } from "yalps"
@@ -93,9 +93,9 @@ const model: Model = {
   constraints: constraints, // is an iterable
   variables: { // kept as an object
     table: { wood: 30, labor: 5, profit: 1200, storage: 30 }, // an object
-    dresser: dresser // an iterable
+    dresser: dresser, // an iterable
   },
-  integers: true // all variables are indicated as integer
+  integers: true, // all variables are indicated as integer
 }
 
 const solution: Solution = solve(model)
@@ -104,144 +104,50 @@ const solution: Solution = solve(model)
 
 <!-- prettier-ignore-end -->
 
-## API
+For more extensive documentation, use the JSDoc annotations / hover information in your editor. In particular, you probably want to take a look at the documentation comments for the `Options`, `Solution`, and `Model` types.
 
-This is a stripped down version of YALPS's API. Use the JSDoc annotations / hover information in your editor for more extensive documentation.
+## In the browser
 
-```typescript
-type Constraint = {
-  equal?: number
-  min?: number
-  max?: number
-}
+In case you need them, minified versions of the code are available under `dist/index.min.js` and `dist/index.min.module.js`.
 
-const lessEq: (value: number) => Constraint
-const greaterEq: (value: number) => Constraint
-const equalTo: (value: number) => Constraint
-const inRange: (lower: number, upper: number) => Constraint
+`index.min.module.js` is an ES module, so you can import YALPS like normal with the proper import maps:
 
-type Coefficients<ConstraintKey = string> =
-  | Iterable<[ConstraintKey, number]>
-  | (ConstraintKey extends string ? { [key in ConstraintKey]?: number } : never)
+```html
+<script type="importmap">
+  {
+    "imports": {
+      "yalps": "https://unpkg.com/yalps@0.6.0/dist/index.min.module.js"
+    }
+  }
+</script>
+<script type="module">
+  import { solve } from "yalps"
+  /* your code */
+</script>
+```
 
-type OptimizationDirection = "maximize" | "minimize"
+When using `index.min.js`, YALPS will be loaded as a global variable named `YALPS`:
 
-type Model<VariableKey = string, ConstraintKey = string> = {
-  direction?: OptimizationDirection // defaults to `"maximize"` if left blank
-  objective?: ConstraintKey // the value to optimize
+```html
+<script src="https://unpkg.com/yalps@0.6.0/dist/index.min.js"></script>
+<!-- For unpkg, `dist/index.min.js` is the default, so you can choose to omit it. -->
+<!-- <script src="https://unpkg.com/yalps@0.6.0"></script> -->
+<script>
+  const { solve } = YALPS
+  /* your code */
+</script>
+```
 
-  constraints:
-    | Iterable<[ConstraintKey, Constraint]>
-    | (ConstraintKey extends string ? { [key in ConstraintKey]?: Constraint } : never)
+Like unpkg above, a similar shorthand is also supported for jsdelivr:
 
-  variables:
-    | Iterable<[VariableKey, Coefficients<ConstraintKey>]>
-    | (VariableKey extends string ? { [key in VariableKey]?: Coefficients<ConstraintKey> } : never)
-
-  /**
-   * An `Iterable` of variable keys that indicate the corresponding variables are integer.
-   * It can also be a `boolean`, indicating whether all variables are integer or not.
-   * If this is left blank, then all variables are treated as not integer.
-   */
-  integers?: boolean | Iterable<VariableKey>
-
-  /**
-   * An `Iterable` of variable keys that indicate the corresponding variables are binary
-   * (can only be 0 or 1 in the solution).
-   * It can also be a `boolean`, indicating whether all variables are binary or not.
-   * If this is left blank, then all variables are treated as not binary.
-   */
-  binaries?: boolean | Iterable<VariableKey>
-}
-
-type SolutionStatus = "optimal" | "infeasible" | "unbounded" | "timedout" | "cycled"
-
-type Solution<VariableKey = string> = {
-  /**
-   * `status` indicates what type of solution, if any, the solver was able to find.
-   *
-   * `"optimal"`: everything went ok, and the solver found an optimal solution.
-   * `"infeasible"`: the model has no possible solutions.
-   * `"unbounded"`: a variable, or combination of variables, are not sufficiently constrained.
-   * `"timedout"`: the solver exited early for an integer problem (due to the `timeout` or `maxIterations` options).
-   * `"cycled"`: the simplex method cycled and exited (this is rare).
-   */
-  status: SolutionStatus
-
-  /**
-   * The final, maximized or minimized value of the objective.
-   * It may be `NaN` in the case that `status` is `"infeasible"`, `"cycled"`, or `"timedout"`.
-   * It may also be +-`Infinity` in the case that `status` is `"unbounded"`.
-   */
-  result: number
-
-  /**
-   * An array of variables and their coefficients that add up to `result` while satisfying the constraints of the problem.
-   * Variables with a coefficient of `0` are not included in this by default.
-   */
-  variables: [VariableKey, number][]
-}
-
-type Options = {
-  /**
-   * Numbers with magnitude equal to or less than the provided precision are treated as zero.
-   * Similarly, the precision determines whether a number is sufficiently integer.
-   * The default value is `1E-8`.
-   */
-  precision?: number
-
-  /**
-   * In rare cases, the solver can cycle.
-   * This is assumed to be the case when the number of pivots exceeds `maxPivots`.
-   * Setting this to `true` will cause the solver to explicitly check for cycles and stop early if one is found.
-   * The default value is `false`.
-   */
-  checkCycles?: boolean
-
-  /**
-   * This determines the maximum number of pivots allowed within the simplex method.
-   * If this is exceeded, then it assumed that the solver cycled.
-   * The default value is `8192`.
-   */
-  maxPivots?: number
-
-  /**
-   * This option applies to integer problems only.
-   * If an integer solution is found within
-   * `(1 +- tolerance) * {the problem's non-integer solution}`,
-   * then this approximate integer solution is returned.
-   * For example, a tolerance of `0.05` will return the first
-   * integer solution found within 5% of the non-integer solution.
-   * The default value is `0` (only find the most optimal solution).
-   */
-  tolerance?: number
-
-  /**
-   * This option applies to integer problems only.
-   * It specifies, in milliseconds, the maximum amount of time the solver may take.
-   * The default value is `Infinity` (no timeout).
-   */
-  timeout?: number
-
-  /**
-   * This option applies to integer problems only.
-   * It determines the maximum number of iterations for the main branch and cut algorithm.
-   * It can be used alongside or instead of `timeout` to prevent the solver from taking too long.
-   * The default value is `32768`.
-   */
-  maxIterations?: number
-
-  /**
-   * Controls whether variables that end up having a value of `0`
-   * should be included in `variables` in the resulting `Solution`.
-   * The default value is `false`.
-   */
-  includeZeroVariables?: boolean
-}
-
-const defaultOptions: Required<Options>
-
-const solve: <VarKey = string, ConKey = string>(model: Model<VarKey, ConKey>, options?: Options) => Solution<VarKey>
+```html
+<script src="https://cdn.jsdelivr.net/npm/yalps@0.6.0"></script>
+<!-- Same as the below -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/yalps@0.6.0/dist/index.min.js"></script> -->
+<script>
+  const { solve } = YALPS
+  /* your code */
+</script>
 ```
 
 # Performance

@@ -2,27 +2,19 @@
   "compilerOptions": {
     /* Docs: https://www.typescriptlang.org/tsconfig */
     // Output
-    "target": "ES2020",
-    "module": "ES2020",
-    "outDir": "lib/module",
-    "declaration": true,
-    "declarationDir": "lib/types",
+    "module": "nodenext",
+    "noEmit": true,
+    "outDir": "dist",
 
-    // Files and resolution
-    "moduleResolution": "node",
+    // Imports
+    "moduleResolution": "nodenext",
     "isolatedModules": true,
     "forceConsistentCasingInFileNames": true,
     "esModuleInterop": true,
+    "skipLibCheck": true,
 
-    // Code related
+    // Type checking
     "strict": true,
-    "allowUnreachableCode": false,
-    "allowUnusedLabels": false,
-    "noFallthroughCasesInSwitch": true,
-    "noImplicitReturns": true,
-    "noPropertyAccessFromIndexSignature": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true
-  },
-  "include": ["src/**/*.ts"]
+    "noImplicitReturns": true
+  }
 }
