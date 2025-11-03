@@ -1,5 +1,9 @@
 # Changelog
 
+# v0.6.1
+
+- Added jsdelivr field to package json.
+
 # v0.6.0
 
 - Fixed packaging for type definitions.
