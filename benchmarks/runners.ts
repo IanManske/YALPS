@@ -1,10 +1,9 @@
 import { Model, Options, Solution, solve } from "../src/index.js"
 import { BenchModel, Runner } from "./benchmark.js"
 import jsLP, { IModel as JsLPModel, Solution as JsLPSolution } from "javascript-lp-solver"
-import { GLPK, LP as GLPKModel, Options as GLPKOptions, Result as GLPKResult } from "glpk.js"
-import glpkConstruct from "glpk.js"
+import GLPK, { type LP as GLPKModel, type Options as GLPKOptions, type Result as GLPKResult } from 'glpk.js/node';
 
-const glpk = (glpkConstruct as unknown as () => GLPK)()
+const glpk = await GLPK()
 
 export const yalpsRunner: Runner<{ model: Model; options: Options }, Solution> = {
   name: "YALPS",

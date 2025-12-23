@@ -76,7 +76,7 @@
     "eslint": "~9.36.0",
     "eslint-config-prettier": "^10.1.8",
     "globals": "^16.5.0",
-    "glpk.js": "^4.0.2",
+    "glpk.js": "5.0.0-pre.1",
     "javascript-lp-solver": "^0.4.24",
     "npm-run-all": "^4.1.5",
     "prettier": "^3.6.2",
