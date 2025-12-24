@@ -3,6 +3,11 @@
   "version": "0.6.3",
   "description": "Yet another linear programming solver. (A rewrite of javascript-lp-solver.) Aims to be decently fast.",
   "homepage": "https://github.com/IanManske/YALPS",
+  "license": "MIT",
+  "author": {
+    "name": "Ian Manske"
+  },
+  "type": "module",
   "files": [
     "dist"
   ],
@@ -22,17 +27,12 @@
     }
   },
   "sideEffects": false,
-  "type": "module",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/IanManske/YALPS.git"
   },
   "bugs": {
     "url": "https://github.com/IanManske/YALPS/issues"
-  },
-  "license": "MIT",
-  "author": {
-    "name": "Ian Manske"
   },
   "keywords": [
     "Linear Programming",
