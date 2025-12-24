@@ -1,12 +1,16 @@
 # Changelog
 
+# v0.6.4
+
+- Updated README benchmarks.
+
 # v0.6.3
 
-- Fix README examples.
+- Fixed README examples.
 
 # v0.6.2
 
-- Remove reference to minified ES module code, since it doesn't work at the moment.
+- Removed reference to minified ES module code, since it doesn't work at the moment.
 
 # v0.6.1
 
