@@ -40,8 +40,8 @@ importers:
         specifier: ^16.5.0
         version: 16.5.0
       glpk.js:
-        specifier: ^4.0.2
-        version: 4.0.2
+        specifier: ^5.0.0
+        version: 5.0.0
       javascript-lp-solver:
         specifier: ^0.4.24
         version: 0.4.24
@@ -1064,8 +1064,9 @@ packages:
     resolution: {integrity: sha512-DpLKbNU4WylpxJykQujfCcwYWiV/Jhm50Goo0wrVILAv5jOr9d+H+UR3PhSCD2rCCEIg0uc+G+muBTwD54JhDQ==}
     engines: {node: '>= 0.4'}
 
-  glpk.js@4.0.2:
-    resolution: {integrity: sha512-GADfTGaExp7C6JfBnBdx7SF80hxPO30VvLP9wpA6EhXgDj5/Oapm+gyF0EFEC7RrPX4JpfRI3TmAtlLckeQIXw==}
+  glpk.js@5.0.0:
+    resolution: {integrity: sha512-ni6nVv/EZVLs4dbN13Vy/H9pDTCjhB9oTlJ7tYi3e7zT6GCunUZJ0DuwCaJhmNc25sQUm6Ra18VaaMY8/fMWWw==}
+    engines: {node: '>=20'}
 
   gopd@1.2.0:
     resolution: {integrity: sha512-ZUKRh6/kUFoAiTAtTYPZJ3hw9wNxx+BIBOijnlG9PnrJsCcSjs1wyyD6vJpaYtgnzDrKYRSqf3OO6Rfa93xsRg==}
@@ -3128,7 +3129,7 @@ snapshots:
       define-properties: 1.2.1
       gopd: 1.2.0
 
-  glpk.js@4.0.2:
+  glpk.js@5.0.0:
     dependencies:
       pako: 2.1.0
 
