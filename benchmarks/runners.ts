@@ -1,7 +1,7 @@
 import { Model, Options, Solution, solve } from "../src/index.js"
 import { BenchModel, Runner } from "./benchmark.js"
 import jsLP, { IModel as JsLPModel, Solution as JsLPSolution } from "javascript-lp-solver"
-import GLPK, { type LP as GLPKModel, type Options as GLPKOptions, type Result as GLPKResult } from 'glpk.js/node';
+import GLPK, { type LP as GLPKModel, type Options as GLPKOptions, type Result as GLPKResult } from "glpk.js/node"
 
 const glpk = await GLPK()
 

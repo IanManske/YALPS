@@ -1,22 +1,24 @@
 import { defineConfig } from "tsup"
 
+const entry = ["src/index.ts"]
+
 export default defineConfig([
   {
-    entry: ["src/index.ts"],
+    entry,
     format: ["esm", "cjs"],
     sourcemap: true,
     dts: true,
     clean: true,
   },
   {
-    entry: ["src/index.ts"],
+    entry,
     format: "esm",
     outExtension: () => ({ js: ".min.module.js" }),
     sourcemap: true,
     minify: true,
   },
   {
-    entry: ["src/index.ts"],
+    entry,
     format: "iife",
     outExtension: () => ({ js: ".min.js" }),
     globalName: "YALPS",
