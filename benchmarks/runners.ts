@@ -1,6 +1,15 @@
 import { Model, Options, Solution, solve } from "../src/index.js"
 import { BenchModel, Runner } from "./benchmark.js"
-import jsLP, { IModel as JsLPModel, Solution as JsLPSolution } from "javascript-lp-solver"
+import jsLP, {
+  ModelDefinition as JsLPModel,
+  SolveResult as JsLPSolution,
+  SolveOptions as JsLPOptions,
+} from "javascript-lp-solver"
+import jsLP_0_4, {
+  IModel as JsLP_0_4_Model,
+  Solution as JsLP_0_4_Solution,
+  IModelOptions as JsLP_0_4_Options,
+} from "javascript-lp-solver-0.4"
 import GLPK, { type LP as GLPKModel, type Options as GLPKOptions, type Result as GLPKResult } from "glpk.js/node"
 
 const glpk = await GLPK()
@@ -36,23 +45,45 @@ const jsLPOptions = (options: Required<Options>) => ({
   exitOnCycles: options.checkCycles,
 })
 
-const jsLPModel = (model: BenchModel, options: Required<Options>): JsLPModel => ({
+const jsLP_0_4_Model = (model: BenchModel, options: Required<Options>): JsLP_0_4_Model => ({
   opType: model.direction === "minimize" ? "min" : "max",
   optimize: model.objective,
   constraints: Object.fromEntries(model.constraints),
   variables: jsLPVariablesObject(model),
   ints: objectSet(model.integers),
   binaries: objectSet(model.binaries),
-  options: jsLPOptions(options),
+  options: jsLPOptions(options) satisfies JsLP_0_4_Options,
+})
+
+export const jsLPRunner_0_4: Runner<{ model: JsLP_0_4_Model; precision: number }, JsLP_0_4_Solution> = {
+  name: "jsLPSolver (0.4.24)",
+  convert: (model, options) => ({
+    model: jsLP_0_4_Model(model, options),
+    precision: options.precision,
+  }),
+  solve: ({ model, precision }) => jsLP_0_4.Solve(model, precision),
+  value: solution => (solution.feasible ? solution.result : NaN),
+}
+
+const jsLPModel = (model: BenchModel, options: Required<Options>): JsLPModel => ({
+  opType: model.direction === "minimize" ? "min" : "max",
+  optimize: model.objective ?? "",
+  constraints: Object.fromEntries(model.constraints),
+  variables: jsLPVariablesObject(model),
+  ints: objectSet(model.integers),
+  binaries: objectSet(model.binaries),
+  options: jsLPOptions(options) satisfies JsLPOptions,
 })
 
 export const jsLPRunner: Runner<{ model: JsLPModel; precision: number }, JsLPSolution> = {
-  name: "jsLPSolver",
+  name: "jsLPSolver (1.0.3)",
   convert: (model, options) => ({
     model: jsLPModel(model, options),
     precision: options.precision,
   }),
-  solve: ({ model, precision }) => jsLP.Solve(model, precision),
+  // @ts-expect-error Types are broken :/
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+  solve: ({ model, precision }) => jsLP.Solve(model, precision) as JsLPSolution,
   value: solution => (solution.feasible ? solution.result : NaN),
 }
 
@@ -93,7 +124,7 @@ const glpkModel = (model: BenchModel) => {
 const glpkOptions = (options: Required<Options>) => ({ mipgap: options.tolerance })
 
 export const glpkRunner: Runner<{ model: GLPKModel; options: GLPKOptions }, GLPKResult> = {
-  name: "glpk.js",
+  name: "glpk.js (5.0.0)",
   convert: (model, options) => ({
     model: glpkModel(model),
     options: glpkOptions(options),
@@ -102,4 +133,9 @@ export const glpkRunner: Runner<{ model: GLPKModel; options: GLPKOptions }, GLPK
   value: ({ result }) => ([glpk.GLP_OPT, glpk.GLP_FEAS, glpk.GLP_UNBND].includes(result.status) ? result.z : NaN),
 }
 
-export const runners: readonly Runner[] = [yalpsRunner as Runner, jsLPRunner as Runner, glpkRunner as Runner]
+export const runners: readonly Runner[] = [
+  yalpsRunner as Runner,
+  jsLPRunner_0_4 as Runner,
+  jsLPRunner as Runner,
+  glpkRunner as Runner,
+]
