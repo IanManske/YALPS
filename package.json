@@ -70,21 +70,21 @@
     "@arethetypeswrong/cli": "^0.18.2",
     "@eslint/js": "^9.39.2",
     "@types/heap": "^0.2.35",
-    "@types/node": "^20.19.27",
-    "@typescript-eslint/eslint-plugin": "^8.50.1",
-    "@vitest/coverage-v8": "^4.0.16",
+    "@types/node": "^24.10.13",
+    "@typescript-eslint/eslint-plugin": "^8.56.0",
+    "@vitest/coverage-v8": "^4.0.18",
     "eslint": "^9.39.2",
     "eslint-config-prettier": "^10.1.8",
     "globals": "^16.5.0",
     "glpk.js": "^5.0.0",
-    "javascript-lp-solver-0.4": "npm:javascript-lp-solver@^0.4.24",
     "javascript-lp-solver": "^1.0.3",
+    "javascript-lp-solver-0.4": "npm:javascript-lp-solver@^0.4.24",
     "npm-run-all": "^4.1.5",
-    "prettier": "^3.7.4",
+    "prettier": "^3.8.1",
     "tsimp": "^2.0.12",
     "tsup": "^8.5.1",
     "typescript": "^5.9.3",
-    "typescript-eslint": "^8.50.1",
-    "vitest": "^4.0.16"
+    "typescript-eslint": "^8.56.0",
+    "vitest": "^4.0.18"
   }
 }
