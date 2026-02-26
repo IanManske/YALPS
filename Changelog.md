@@ -1,5 +1,9 @@
 # Changelog
 
+# v0.6.5
+
+- Updated README benchmarks.
+
 # v0.6.4
 
 - Updated README benchmarks.
