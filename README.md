@@ -136,107 +136,118 @@ Like unpkg above, a similar shorthand is also supported for jsdelivr:
 
 While YALPS generally performs better than javascript-lp-solver, this solver is still geared towards small problems (hundreds of variables or constraints). For example, the solver keeps the full representation of the matrix in memory as a dense array. As a general rule, the number of variables and constraints should probably be a few thousand or less, and the number of integer variables should be a few hundred at the most. If your use case has large problems, it is recommended that you first benchmark and test the solver on your own before committing to using it. For very large and/or integral problems, a more professional solver is recommended, e.g. [glpk.js](https://www.npmjs.com/package/glpk.js).
 
-Nevertheless, below are the results from some benchmarks comparing YALPS to other solvers. Each solver was run 30 times for each benchmark problem. A full garbage collection was manually triggered before starting each solver's 30 trials. The averages and standard deviations are measured in milliseconds. Slowdown is calculated as `mean / fastest mean`. The benchmarks were run on NodeJS v22.21.1. Your mileage may vary in a browser setting.
+Nevertheless, below are the results from some benchmarks comparing YALPS to other solvers. Each solver was run 30 times for each benchmark problem. A full garbage collection was manually triggered before starting each solver's 30 trials. The averages and standard deviations are measured in milliseconds. Slowdown is calculated as `mean / fastest mean`. The benchmarks were run on NodeJS v24.13.0. Your mileage may vary in a browser setting.
 
 <pre>
 Monster 2: 888 constraints, 924 variables, 112 integers:
-┌────────────┬────────┬────────┬──────────┐
-│ (index)    │ mean   │ stdDev │ slowdown │
-├────────────┼────────┼────────┼──────────┤
-│ YALPS      │  48.64 │ 1.23   │ 1        │
-│ glpk.js    │ 107.9  │ 5.9    │ 2.22     │
-│ jsLPSolver │ 162.33 │ 5.41   │ 3.34     │
-└────────────┴────────┴────────┴──────────┘
+┌─────────────────────┬────────┬────────┬──────────┐
+│ (index)             │ mean   │ stdDev │ slowdown │
+├─────────────────────┼────────┼────────┼──────────┤
+│ YALPS               │ 52.29  │ 3.43   │ 1        │
+│ jsLPSolver (1.0.3)  │ 62.61  │ 4.72   │ 1.2      │
+│ glpk.js (5.0.0)     │ 109.22 │ 2.72   │ 2.09     │
+│ jsLPSolver (0.4.24) │ 150.98 │ 4.79   │ 2.89     │
+└─────────────────────┴────────┴────────┴──────────┘
 
 Monster Problem: 600 constraints, 552 variables, 0 integers:
-┌────────────┬──────┬────────┬──────────┐
-│ (index)    │ mean │ stdDev │ slowdown │
-├────────────┼──────┼────────┼──────────┤
-│ YALPS      │ 1.39 │ 0.85   │ 1        │
-│ glpk.js    │ 2.75 │ 0.16   │ 1.98     │
-│ jsLPSolver │ 5.25 │ 2.23   │ 3.78     │
-└────────────┴──────┴────────┴──────────┘
+┌─────────────────────┬──────┬────────┬──────────┐
+│ (index)             │ mean │ stdDev │ slowdown │
+├─────────────────────┼──────┼────────┼──────────┤
+│ YALPS               │ 1.45 │ 1.01   │ 1        │
+│ jsLPSolver (1.0.3)  │ 2.79 │ 0.97   │ 1.92     │
+│ glpk.js (5.0.0)     │ 2.87 │ 0.3    │ 1.98     │
+│ jsLPSolver (0.4.24) │ 3.31 │ 1.74   │ 2.29     │
+└─────────────────────┴──────┴────────┴──────────┘
 
 Vendor Selection: 1641 constraints, 1640 variables, 40 integers:
-┌────────────┬────────┬────────┬──────────┐
-│ (index)    │ mean   │ stdDev │ slowdown │
-├────────────┼────────┼────────┼──────────┤
-│ glpk.js    │  52.94 │ 1.71   │ 1        │
-│ YALPS      │ 266.26 │ 2.42   │ 5.03     │
-│ jsLPSolver │ 354.01 │ 9.1    │ 6.69     │
-└────────────┴────────┴────────┴──────────┘
+┌─────────────────────┬────────┬────────┬──────────┐
+│ (index)             │ mean   │ stdDev │ slowdown │
+├─────────────────────┼────────┼────────┼──────────┤
+│ glpk.js (5.0.0)     │ 52.96  │ 0.93   │ 1        │
+│ YALPS               │ 272.19 │ 2.6    │ 5.14     │
+│ jsLPSolver (0.4.24) │ 385.38 │ 13.88  │ 7.28     │
+│ jsLPSolver (1.0.3)  │ 395.69 │ 17.89  │ 7.47     │
+└─────────────────────┴────────┴────────┴──────────┘
 
 Large Farm MIP: 35 constraints, 100 variables, 100 integers:
-┌────────────┬───────┬────────┬──────────┐
-│ (index)    │ mean  │ stdDev │ slowdown │
-├────────────┼───────┼────────┼──────────┤
-│ glpk.js    │  5.34 │ 0.12   │  1       │
-│ YALPS      │ 29.06 │ 1.27   │  5.45    │
-│ jsLPSolver │ 53.98 │ 1.06   │ 10.12    │
-└────────────┴───────┴────────┴──────────┘
+┌─────────────────────┬───────┬────────┬──────────┐
+│ (index)             │ mean  │ stdDev │ slowdown │
+├─────────────────────┼───────┼────────┼──────────┤
+│ glpk.js (5.0.0)     │ 5.24  │ 0.3    │ 1        │
+│ YALPS               │ 28.88 │ 1      │ 5.51     │
+│ jsLPSolver (1.0.3)  │ 39.62 │ 1.62   │ 7.56     │
+│ jsLPSolver (0.4.24) │ 53.85 │ 1.28   │ 10.27    │
+└─────────────────────┴───────┴────────┴──────────┘
 
 AGG2: 516 constraints, 302 variables, 0 integers:
-┌────────────┬──────┬────────┬──────────┐
-│ (index)    │ mean │ stdDev │ slowdown │
-├────────────┼──────┼────────┼──────────┤
-│ YALPS      │ 1.45 │ 0.57   │ 1        │
-│ glpk.js    │ 4.84 │ 0.19   │ 3.35     │
-│ jsLPSolver │ 5.58 │ 2.27   │ 3.86     │
-└────────────┴──────┴────────┴──────────┘
+┌─────────────────────┬──────┬────────┬──────────┐
+│ (index)             │ mean │ stdDev │ slowdown │
+├─────────────────────┼──────┼────────┼──────────┤
+│ YALPS               │ 1.44 │ 0.44   │ 1        │
+│ jsLPSolver (0.4.24) │ 3.52 │ 1.35   │ 2.44     │
+│ jsLPSolver (1.0.3)  │ 4.6  │ 1.2    │ 3.2      │
+│ glpk.js (5.0.0)     │ 4.98 │ 0.1    │ 3.46     │
+└─────────────────────┴──────┴────────┴──────────┘
 
 BEACONFD: 173 constraints, 262 variables, 0 integers:
-┌────────────┬──────┬────────┬──────────┐
-│ (index)    │ mean │ stdDev │ slowdown │
-├────────────┼──────┼────────┼──────────┤
-│ glpk.js    │ 1.14 │ 0.07   │ 1        │
-│ YALPS      │ 2.37 │ 0.09   │ 2.07     │
-│ jsLPSolver │ 4.62 │ 0.79   │ 4.04     │
-└────────────┴──────┴────────┴──────────┘
+┌─────────────────────┬──────┬────────┬──────────┐
+│ (index)             │ mean │ stdDev │ slowdown │
+├─────────────────────┼──────┼────────┼──────────┤
+│ glpk.js (5.0.0)     │ 1.19 │ 0.08   │ 1        │
+│ YALPS               │ 2.38 │ 0.03   │ 2        │
+│ jsLPSolver (0.4.24) │ 4.19 │ 0.44   │ 3.53     │
+│ jsLPSolver (1.0.3)  │ 4.49 │ 0.41   │ 3.79     │
+└─────────────────────┴──────┴────────┴──────────┘
 
 SC205: 205 constraints, 203 variables, 0 integers:
-┌────────────┬──────┬────────┬──────────┐
-│ (index)    │ mean │ stdDev │ slowdown │
-├────────────┼──────┼────────┼──────────┤
-│ glpk.js    │ 1.86 │ 0.06   │ 1        │
-│ YALPS      │ 6.98 │ 0.08   │ 3.75     │
-│ jsLPSolver │ 9.1  │ 0.79   │ 4.89     │
-└────────────┴──────┴────────┴──────────┘
+┌─────────────────────┬──────┬────────┬──────────┐
+│ (index)             │ mean │ stdDev │ slowdown │
+├─────────────────────┼──────┼────────┼──────────┤
+│ glpk.js (5.0.0)     │ 1.9  │ 0.07   │ 1        │
+│ YALPS               │ 6.94 │ 0.03   │ 3.66     │
+│ jsLPSolver (0.4.24) │ 9.29 │ 1.45   │ 4.9      │
+│ jsLPSolver (1.0.3)  │ 9.68 │ 1.66   │ 5.11     │
+└─────────────────────┴──────┴────────┴──────────┘
 
 SCFXM1: 330 constraints, 457 variables, 0 integers:
-┌────────────┬───────┬────────┬──────────┐
-│ (index)    │ mean  │ stdDev │ slowdown │
-├────────────┼───────┼────────┼──────────┤
-│ glpk.js    │  4.69 │ 0.29   │ 1        │
-│ YALPS      │ 19.19 │ 0.19   │ 4.09     │
-│ jsLPSolver │ 27.72 │ 1.87   │ 5.91     │
-└────────────┴───────┴────────┴──────────┘
+┌─────────────────────┬───────┬────────┬──────────┐
+│ (index)             │ mean  │ stdDev │ slowdown │
+├─────────────────────┼───────┼────────┼──────────┤
+│ glpk.js (5.0.0)     │ 4.61  │ 0.18   │ 1        │
+│ YALPS               │ 19.72 │ 0.19   │ 4.28     │
+│ jsLPSolver (0.4.24) │ 27.83 │ 4.05   │ 6.04     │
+│ jsLPSolver (1.0.3)  │ 29.32 │ 5.29   │ 6.36     │
+└─────────────────────┴───────┴────────┴──────────┘
 
 SCRS8: 490 constraints, 1169 variables, 0 integers:
-┌────────────┬───────┬────────┬──────────┐
-│ (index)    │ mean  │ stdDev │ slowdown │
-├────────────┼───────┼────────┼──────────┤
-│ glpk.js    │ 14.04 │ 0.19   │ 1        │
-│ YALPS      │ 52.16 │ 0.69   │ 3.71     │
-│ jsLPSolver │ 87.78 │ 5      │ 6.25     │
-└────────────┴───────┴────────┴──────────┘
+┌─────────────────────┬───────┬────────┬──────────┐
+│ (index)             │ mean  │ stdDev │ slowdown │
+├─────────────────────┼───────┼────────┼──────────┤
+│ glpk.js (5.0.0)     │ 14.59 │ 0.65   │ 1        │
+│ YALPS               │ 53.19 │ 0.71   │ 3.65     │
+│ jsLPSolver (1.0.3)  │ 76.41 │ 2.58   │ 5.24     │
+│ jsLPSolver (0.4.24) │ 85.74 │ 4.68   │ 5.88     │
+└─────────────────────┴───────┴────────┴──────────┘
 
 SCTAP2: 1090 constraints, 1880 variables, 0 integers:
-┌────────────┬───────┬────────┬──────────┐
-│ (index)    │ mean  │ stdDev │ slowdown │
-├────────────┼───────┼────────┼──────────┤
-│ glpk.js    │ 13.92 │ 0.18   │ 1        │
-│ YALPS      │ 44.11 │ 1.56   │ 3.17     │
-│ jsLPSolver │ 84.32 │ 5.42   │ 6.06     │
-└────────────┴───────┴────────┴──────────┘
+┌─────────────────────┬───────┬────────┬──────────┐
+│ (index)             │ mean  │ stdDev │ slowdown │
+├─────────────────────┼───────┼────────┼──────────┤
+│ glpk.js (5.0.0)     │ 14.28 │ 0.15   │ 1        │
+│ YALPS               │ 43.9  │ 2.49   │ 3.07     │
+│ jsLPSolver (1.0.3)  │ 62.01 │ 2.93   │ 4.34     │
+│ jsLPSolver (0.4.24) │ 78.5  │ 3.6    │ 5.5      │
+└─────────────────────┴───────┴────────┴──────────┘
 
 SHIP08S: 778 constraints, 2387 variables, 0 integers:
-┌────────────┬───────┬────────┬──────────┐
-│ (index)    │ mean  │ stdDev │ slowdown │
-├────────────┼───────┼────────┼──────────┤
-│ glpk.js    │  8.65 │ 0.28   │ 1        │
-│ YALPS      │ 14.61 │ 0.89   │ 1.69     │
-│ jsLPSolver │ 49.99 │ 5.49   │ 5.78     │
-└────────────┴───────┴────────┴──────────┘
+┌─────────────────────┬───────┬────────┬──────────┐
+│ (index)             │ mean  │ stdDev │ slowdown │
+├─────────────────────┼───────┼────────┼──────────┤
+│ glpk.js (5.0.0)     │ 8.79  │ 0.22   │ 1        │
+│ YALPS               │ 14.92 │ 2.58   │ 1.7      │
+│ jsLPSolver (1.0.3)  │ 27.05 │ 3.81   │ 3.08     │
+│ jsLPSolver (0.4.24) │ 43.07 │ 5.54   │ 4.9      │
+└─────────────────────┴───────┴────────┴──────────┘
 </pre>
 
 The code used for these benchmarks is available under `benchmarks/`. Measuring performance isn't always straightforward, so take these synthetic benchmarks with a grain of salt. It is always recommended to benchmark for your use case. Then again, if your problems are typically of small size, then this solver should have no issue (and may be faster)!
