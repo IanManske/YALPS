@@ -1,23 +1,59 @@
 /** Specifies the bounds for the total of a value. */
-export type Constraint = {
-  /**
-   * The total should be equal to this number.
-   * In the case that `min` or `max` are also defined, this is used instead.
-   */
-  readonly equal?: number
+export type Constraint =
+  | {
+      /**
+       * The total should be equal to this number.
+       */
+      readonly equal: number
 
-  /**
-   * The total should be greater than or equal to this number.
-   * Can be specified alongside `max`.
-   */
-  readonly min?: number
+      /**
+       * The total should be greater than or equal to this number.
+       * Can be specified alongside `max`.
+       */
+      readonly min?: never
 
-  /**
-   * The total should be less than or equal to this number.
-   * Can be specified alongside `min`.
-   */
-  readonly max?: number
-}
+      /**
+       * The total should be less than or equal to this number.
+       * Can be specified alongside `min`.
+       */
+      readonly max?: never
+    }
+  | {
+      /**
+       * The total should be equal to this number.
+       */
+      readonly equal?: never
+
+      /**
+       * The total should be greater than or equal to this number.
+       * Can be specified alongside `max`.
+       */
+      readonly min: number
+
+      /**
+       * The total should be less than or equal to this number.
+       * Can be specified alongside `min`.
+       */
+      readonly max?: number
+    }
+  | {
+      /**
+       * The total should be equal to this number.
+       */
+      readonly equal?: never
+
+      /**
+       * The total should be greater than or equal to this number.
+       * Can be specified alongside `max`.
+       */
+      readonly min?: number
+
+      /**
+       * The total should be less than or equal to this number.
+       * Can be specified alongside `min`.
+       */
+      readonly max: number
+    }
 
 /**
  * The coefficients of a variable represented as either an object or an `Iterable`.

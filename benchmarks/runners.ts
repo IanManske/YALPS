@@ -64,8 +64,7 @@ const glpkModel = (model: BenchModel) => {
       equal != null ? { type: glpk.GLP_FX, ub: 0.0, lb: equal }
       : min != null && max != null ? { type: glpk.GLP_DB, ub: max, lb: min }
       : min != null ? { type: glpk.GLP_LO, ub: 0.0, lb: min }
-      : max != null ? { type: glpk.GLP_UP, ub: max, lb: 0.0 }
-      : { type: glpk.GLP_FR, ub: 0.0, lb: 0.0 }
+      : { type: glpk.GLP_UP, ub: max, lb: 0.0 }
 
     constraints.set(name, { name, vars: [], bnds })
   }

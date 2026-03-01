@@ -5,8 +5,8 @@ import { simplex } from "./simplex.js"
 import { branchAndCut } from "./branchAndCut.js"
 
 // Creates a solution object representing the optimal solution (if any).
-const solution = <VarKey, ConKey>(
-  { tableau, sign, variables: vars }: TableauModel<VarKey, ConKey>,
+const solution = <VarKey>(
+  { tableau, sign, variables: vars }: TableauModel<VarKey>,
   status: SolutionStatus,
   result: number,
   { precision, includeZeroVariables }: Required<Options>,
@@ -14,7 +14,7 @@ const solution = <VarKey, ConKey>(
   if (status === "optimal" || (status === "timedout" && !Number.isNaN(result))) {
     const variables: [VarKey, number][] = []
     for (let i = 0; i < vars.length; i++) {
-      const [variable] = vars[i]
+      const variable = vars[i]
       const row = tableau.positionOfVariable[i + 1] - tableau.width
       const value = row >= 0 ? index(tableau, row, 0) : 0.0
       if (value > precision) {
@@ -36,7 +36,7 @@ const solution = <VarKey, ConKey>(
       // prettier-ignore
       variables:
         (0 <= variable && variable < vars.length)
-          ? [[vars[variable][0], Infinity]]
+          ? [[vars[variable], Infinity]]
           : [],
     }
   } else {
