@@ -20,46 +20,47 @@ export const update = (tableau: Tableau, row: number, col: number, value: number
   tableau.matrix[Math.imul(row, tableau.width) + col] = value
 }
 
-export type Variables<VarKey = string, ConKey = string> = readonly (readonly [VarKey, Coefficients<ConKey>])[]
-
 // A tableau with some additional context.
-export type TableauModel<VariableKey = string, ConstraintKey = string> = {
+export type TableauModel<VariableKey = string> = {
   readonly tableau: Tableau
   readonly sign: number
-  readonly variables: Variables<VariableKey, ConstraintKey>
+  readonly variables: readonly VariableKey[]
   readonly integers: readonly number[]
 }
 
-const convertToIterable = <K, V>(
-  seq: Iterable<readonly [K, V]> | ([K] extends [string] ? Readonly<Partial<Record<K, V>>> : never),
-) =>
+type MaybeRecord<K, V> = [K] extends [string] ? Readonly<Partial<Record<K, V>>> : never
+
+const isIterable = <K, V>(seq: Iterable<readonly [K, V]> | MaybeRecord<K, V>): seq is Iterable<readonly [K, V]> =>
   Symbol.iterator in seq && typeof seq[Symbol.iterator] === "function"
-    ? seq
-    : // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion
-      (Object.entries(seq) as Iterable<readonly [K, V]>)
+
+const recordToArray = <K extends string, V>(record: Readonly<Partial<Record<K, V>>>) =>
+  Object.entries<V | undefined>(record).filter((x): x is [K, Exclude<V, undefined>] => x[1] != null)
+
+const toIterable = <K, V>(seq: Iterable<readonly [K, V]> | MaybeRecord<K, V>): Iterable<readonly [K, V]> =>
+  isIterable(seq) ? seq : recordToArray(seq)
 
 // prettier-ignore
-const convertToSet = <T>(set: boolean | Iterable<T> | undefined): true | Set<T> =>
+const toSet = <T>(set: boolean | Iterable<T> | undefined): true | Set<T> =>
   set === true ? true
   : set === false ? new Set()
   : set instanceof Set ? set
   : new Set(set)
 
-export const tableauModel = <VarKey = string, ConKey = string>(
-  model: Model<VarKey, ConKey>,
-): TableauModel<VarKey, ConKey> => {
+export const tableauModel = <VarKey = string, ConKey = string>(model: Model<VarKey, ConKey>): TableauModel<VarKey> => {
   const { direction, objective, integers, binaries } = model
   const sign = direction === "minimize" ? -1.0 : 1.0
 
-  const constraintsIter = convertToIterable(model.constraints)
-  const variablesIter = convertToIterable(model.variables)
-  const variables: Variables<VarKey, ConKey> = Array.isArray(variablesIter) ? variablesIter : Array.from(variablesIter)
+  const constraintsIter = toIterable(model.constraints)
+  const variablesIter = toIterable(model.variables)
+  const variables: readonly (readonly [VarKey, Coefficients<ConKey>])[] = Array.isArray(variablesIter)
+    ? variablesIter
+    : Array.from(variablesIter)
 
   const binaryConstraintCol: number[] = []
   const ints: number[] = []
   if (integers != null || binaries != null) {
-    const binaryVariables = convertToSet(binaries)
-    const integerVariables = binaryVariables === true ? true : convertToSet(integers)
+    const binaryVariables = toSet(binaries)
+    const integerVariables = binaryVariables === true ? true : toSet(integers)
     for (let i = 1; i <= variables.length; i++) {
       const [key] = variables[i - 1]
       if (binaryVariables === true || binaryVariables.has(key)) {
@@ -99,7 +100,7 @@ export const tableauModel = <VarKey = string, ConKey = string>(
   }
 
   for (let c = 1; c < width; c++) {
-    for (const [constraint, coef] of convertToIterable(variables[c - 1][1])) {
+    for (const [constraint, coef] of toIterable(variables[c - 1][1])) {
       if (constraint === objective) {
         update(tableau, 0, c, sign * coef)
       }
@@ -134,5 +135,5 @@ export const tableauModel = <VarKey = string, ConKey = string>(
     update(tableau, row, binaryConstraintCol[b], 1.0)
   }
 
-  return { tableau, sign, variables, integers: ints }
+  return { tableau, sign, variables: variables.map(([k]) => k), integers: ints }
 }

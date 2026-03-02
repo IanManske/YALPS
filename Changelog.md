@@ -1,5 +1,11 @@
 # Changelog
 
+# v0.7.0
+
+- Changed the `Constraint` type to be an union of mutually exclusive records instead of one record with optional fields.
+- Fixed a possible null/undefined dereference for variables, variables coefficients, and constraints specified as records.
+- Updated README benchmarks.
+
 # v0.6.4
 
 - Updated README benchmarks.

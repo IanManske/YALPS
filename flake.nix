@@ -10,8 +10,7 @@
         let pkgs = import nixpkgs { inherit system; }; in
         {
           devShells.default = with pkgs; mkShell {
-            buildInputs = [ nodejs pnpm typos ];
-            packages = [];
+            packages = [ nodejs pnpm typos ];
           };
         }
       );

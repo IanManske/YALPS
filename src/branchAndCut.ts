@@ -86,11 +86,11 @@ const mostFractionalVar = (
 
 // Runs the branch and cut algorithm to solve an integer problem.
 // Requires the non-integer solution as input.
-export const branchAndCut = <VarKey, ConKey>(
-  tabmod: TableauModel<VarKey, ConKey>,
+export const branchAndCut = <VarKey>(
+  tabmod: TableauModel<VarKey>,
   initResult: number,
   options: Required<Options>,
-): [TableauModel<VarKey, ConKey>, SolutionStatus, number] => {
+): [TableauModel<VarKey>, SolutionStatus, number] => {
   const { tableau, sign, integers } = tabmod
   const { precision, maxIterations, tolerance, timeout } = options
   const [initVariable, initValue, initFrac] = mostFractionalVar(tableau, integers)

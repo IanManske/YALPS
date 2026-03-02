@@ -4,6 +4,8 @@ import { TupleArray, TestCase, testCases } from "./helpers/read.js"
 import { keys, newRand, randomIndex, randomElement, sample, enumerate, valueMapping } from "./helpers/util.js"
 import { test, expect } from "vitest"
 
+type Mutable<T> = { -readonly [K in keyof T]: T[K] }
+
 const testData = testCases().map(({ model }) => model)
 
 // deepEquals uses Object.is (sameValue algorithm) instead of sameValueZero algorithm, so deepEquals(0, -0) === false
@@ -55,7 +57,7 @@ test.each(testData)("Objective row and sign are negated for opposite optimizatio
   for (let c = 0; c < expected.tableau.width; c++) {
     expected.tableau.matrix[c] = negate(expected.tableau.matrix[c])
   }
-  ;(expected as any).sign = -expected.sign // eslint-disable-line
+  ;(expected as Mutable<TableauModel>).sign = -expected.sign
 
   expect(result).toStrictEqual(expected)
 })
@@ -70,13 +72,7 @@ test.each(testData)("Objective can share the same key as a constraint", model =>
   const rand = newRand(model.hash)
   const conIndex = randomIndex(rand, model.constraints)
   const [key, constraint] = model.constraints[conIndex]
-  // prettier-ignore
-  const sign =
-    constraint.equal != null || constraint.max != null ? 1.0
-    : constraint.min != null ? -1.0
-    : 0.0
-  if (sign === 0.0) return
-
+  const sign = constraint.equal != null || constraint.max != null ? 1.0 : -1.0
   const result = tableauFrom.objective(model, key)
   for (let c = 0; c < result.tableau.width; c++) {
     if (result.tableau.matrix[c] === 0.0) {
@@ -119,12 +115,8 @@ test.each(testData)("Coefficients as an object, array, and map", model => {
   const object = mapVariables(Object.fromEntries)
   const array = tableauModel(model)
 
-  const equal = (a: TableauModel, b: TableauModel) => {
-    expect({ ...a, variables: keys(a.variables) }).toStrictEqual({ ...b, variables: keys(b.variables) })
-  }
-
-  equal(map, array)
-  equal(object, array)
+  expect(map).toStrictEqual(array)
+  expect(object).toStrictEqual(array)
 })
 
 test.each(testData)("No variables marked as integer", model => {
@@ -187,13 +179,16 @@ test.each(testData)("Binary has higher precedence than integer", model => {
 
 test.each(testData)("Swapping bound direction gives negated constraint row", model => {
   const constraints = enumerate(model.constraints).filter(
-    ([, [, con]]) => con.equal == null && (con.max == null) !== (con.min == null),
+    (entry): entry is [number, readonly [string, { max: number; min?: never } | { min: number; max?: never }]] => {
+      const constraint = entry[1][1]
+      return constraint.equal == null && (constraint.max == null) !== (constraint.min == null)
+    },
   )
   if (constraints.length === 0) return // model not applicable
 
   const rand = newRand(model.hash)
   const [index, [key, constraint]] = randomElement(rand, constraints)
-  const swapped = constraint.min == null ? ({ min: constraint.max } as const) : ({ max: constraint.min } as const)
+  const swapped = constraint.min == null ? { min: constraint.max } : { max: constraint.min }
 
   const newConstraints = model.constraints.slice()
   newConstraints[index] = [key, swapped]
@@ -211,27 +206,6 @@ test.each(testData)("Swapping bound direction gives negated constraint row", mod
     const i = row * expected.tableau.width + c
     expected.tableau.matrix[i] = negate(expected.tableau.matrix[i])
   }
-
-  expect(result).toStrictEqual(expected)
-})
-
-test.each(testData)("Equal has higher precedence than min and max", model => {
-  const constraints = enumerate(model.constraints).filter(([, [, con]]) => con.equal != null)
-  if (constraints.length === 0) return // model not applicable
-
-  const rand = newRand(model.hash)
-  const [index, [key, constraint]] = randomElement(rand, constraints)
-  const value = constraint.equal!
-  const modified = model.constraints.slice()
-  const multiple = {
-    equal: value,
-    min: value + 1.0,
-    max: value - 1.0,
-  }
-  modified[index] = [key, multiple]
-  const result = tableauFrom.constraints(model, modified)
-
-  const expected = tableauModel(model)
 
   expect(result).toStrictEqual(expected)
 })
@@ -268,8 +242,8 @@ test.each(testData)("Duplicate variable keys do not affect matrix", model => {
   variables[indexChange] = [key, variables[indexChange][1]]
   const result = tableauFrom.variables(model, variables)
 
-  const expected = tableauModel(model) as any // eslint-disable-line
-  expected.variables[indexChange][0] = key // eslint-disable-line
+  const expected = tableauModel(model)
+  ;(expected.variables as Mutable<string[]>)[indexChange] = key
 
   expect(result).toStrictEqual(expected)
 })
@@ -288,8 +262,8 @@ test.each(testData)("Last value is used for coefficients with the same key", mod
   newVariables[varIndex] = [varKey, newVariable]
   const result = tableauFrom.variables(model, newVariables)
 
-  const expected = tableauModel(model) as any // eslint-disable-line
-  expected.variables[varIndex] = [varKey, newVariable] // eslint-disable-line
+  const expected = tableauModel(model)
+  ;(expected.variables as Mutable<string[]>)[varIndex] = varKey
 
   expect(result).toStrictEqual(expected)
 })
